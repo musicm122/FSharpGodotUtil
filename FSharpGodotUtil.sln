@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Common", "Common\Common\Common.fsproj", "{422A9923-6D8F-4BEC-BB2C-A0C80BD1B6C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", "{60CD3B25-5F12-4BD8-8CCD-06A980AB4C09}"
+	ProjectSection(SolutionItems) = preProject
+		Assemblies\.mono\assemblies\Debug\api_hash_cache.cfg = Assemblies\.mono\assemblies\Debug\api_hash_cache.cfg
+		Assemblies\.mono\assemblies\Debug\GodotSharp.dll = Assemblies\.mono\assemblies\Debug\GodotSharp.dll
+		Assemblies\.mono\assemblies\Debug\GodotSharp.pdb = Assemblies\.mono\assemblies\Debug\GodotSharp.pdb
+		Assemblies\.mono\assemblies\Debug\GodotSharp.xml = Assemblies\.mono\assemblies\Debug\GodotSharp.xml
+		Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll = Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll
+		Assemblies\.mono\assemblies\Debug\GodotSharpEditor.pdb = Assemblies\.mono\assemblies\Debug\GodotSharpEditor.pdb
+		Assemblies\.mono\assemblies\Debug\GodotSharpEditor.xml = Assemblies\.mono\assemblies\Debug\GodotSharpEditor.xml
+		Assemblies\.mono\metadata\ide_messaging_meta.txt = Assemblies\.mono\metadata\ide_messaging_meta.txt
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core2D", "Core2D\Core2D.fsproj", "{9043855E-A8EE-4ABF-B35E-A50F9880A910}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core3D", "Core3D\Core3D.fsproj", "{171D8A18-EF23-475E-B696-DE4761C0F791}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CoreUI", "CoreUI\CoreUI.fsproj", "{60EC1797-E88F-4D99-8B70-C68817C2470A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{422A9923-6D8F-4BEC-BB2C-A0C80BD1B6C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{422A9923-6D8F-4BEC-BB2C-A0C80BD1B6C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{422A9923-6D8F-4BEC-BB2C-A0C80BD1B6C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{422A9923-6D8F-4BEC-BB2C-A0C80BD1B6C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9043855E-A8EE-4ABF-B35E-A50F9880A910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9043855E-A8EE-4ABF-B35E-A50F9880A910}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9043855E-A8EE-4ABF-B35E-A50F9880A910}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9043855E-A8EE-4ABF-B35E-A50F9880A910}.Release|Any CPU.Build.0 = Release|Any CPU
+		{171D8A18-EF23-475E-B696-DE4761C0F791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{171D8A18-EF23-475E-B696-DE4761C0F791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{171D8A18-EF23-475E-B696-DE4761C0F791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{171D8A18-EF23-475E-B696-DE4761C0F791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60EC1797-E88F-4D99-8B70-C68817C2470A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60EC1797-E88F-4D99-8B70-C68817C2470A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60EC1797-E88F-4D99-8B70-C68817C2470A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60EC1797-E88F-4D99-8B70-C68817C2470A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,9 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProjects_005Cgodot_005CBigger_0020Projects_005CTooling_005CFSharpGodotUtil_005CAssemblies_005CGodotSharp_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProjects_005Cgodot_005CBigger_0020Projects_005CTooling_005CFSharpGodotUtil_005CAssemblies_005CGodotSharpEditor_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProjects_005Cgodot_005CBigger_0020Projects_005CTooling_005CFSharpGodotUtil_005CAssemblies_005C_002Emono_005Cassemblies_005CDebug_005CGodotSharp_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProjects_005Cgodot_005CBigger_0020Projects_005CTooling_005CFSharpGodotUtil_005CAssemblies_005C_002Emono_005Cassemblies_005CDebug_005CGodotSharpEditor_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Projects\godot\Bigger Projects\Tooling\FSharpGodotUtil\Assemblies\.mono\assemblies\Debug\GodotSharp.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Projects\godot\Bigger Projects\Tooling\FSharpGodotUtil\Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

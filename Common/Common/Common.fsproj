@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <TargetFramework>net472</TargetFramework>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Constants.fs" />
+        <Compile Include="Types.fs" />
+        <Compile Include="Util.fs" />
+        <Compile Include="Interfaces.fs" />
+        <Compile Include="Extensions.fs" />
+        <Compile Include="Validation.fs" />
+        <Compile Include="AudioManager.fs" />
+        <Compile Include="StateMachine.fs" />
+        <Compile Include="Camera.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Godot.Signals" Version="3.4.1" />
+        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="GodotSharp">
+        <HintPath>..\..\Assemblies\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
+      </Reference>
+      <Reference Include="GodotSharpEditor">
+        <HintPath>..\..\Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+</Project>

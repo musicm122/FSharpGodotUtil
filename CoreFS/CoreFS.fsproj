@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <TargetFramework>net472</TargetFramework>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Resources.fs" />
+        <Compile Include="Types.fs" />
+        <Compile Include="Events.fs" />
+        <Compile Include="Services\Log.fs" />
+        <Compile Include="Services\ThirdParty\Dialogic.fs" />
+        <Compile Include="Services\DialogManager.fs" />
+        <Compile Include="Services\env.fs" />
+        <Compile Include="Util\CameraUtil.fs" />
+        <Compile Include="Util\PhysicsUtil.fs" />
+        <Compile Include="Element\Examinable.fs" />
+        <Compile Include="Component\Player.fs" />
+        <Compile Include="Component\Weapon.fs" />
+        <Compile Include="Scene\LevelFs.fs" />
+
+
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="GodotSharp">
+            <HintPath>..\Ref\GodotSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="GodotSharpEditor">
+            <HintPath>..\Ref\GodotSharpEditor.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common\Common\Common.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Godot.Signals" Version="3.4.1" />
+        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3" />
+        <PackageReference Include="TinyIoC" Version="1.3.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
