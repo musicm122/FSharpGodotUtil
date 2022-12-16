@@ -41,24 +41,24 @@ type AudioManager() =
         // channel.Connect("finished", this, nameof(this.onStreamFinished), new Godot.Collections.Array(channel)) with
 
         //match channel.TryConnectSignal(connection) with
-        match channel.Connect("finished", this, nameof (this.onStreamFinished), new Godot.Collections.Array(channel))
+        match channel.Connect("finished", this, nameof this.onStreamFinished, new Godot.Collections.Array(channel))
             with
         | err when err = Error.Ok -> channel
         | ex ->
             let gEx =
                 GodotAudioSignalException(
                     ex,
-                    $"connecting {channel.GetType().ToString()} signal 'finished' to {nameof (this.onStreamFinished)} failed"
+                    $"connecting {channel.GetType().ToString()} signal 'finished' to {nameof this.onStreamFinished} failed"
                 )
 
             raise gEx
 
     member this.initializeChannels =
-        let initChannelOnMaster (_) = this.initializeChannel Bus
+        let initChannelOnMaster _ = this.initializeChannel Bus
 
         [ 0..TotalChannels ]
-        |> List.map (initChannelOnMaster)
-        |> List.iter (this.bindChannelToParent)
+        |> List.map initChannelOnMaster
+        |> List.iter this.bindChannelToParent
 
         ignore
 

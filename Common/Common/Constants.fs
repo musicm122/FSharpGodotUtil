@@ -1,6 +1,14 @@
 ﻿namespace Common.Constants
 
+open Godot
 
+
+module CommonColors =    
+    let WarningColor = Color(255f, 255f, 0f)
+    let IdleColor = Color(140f, 140f, 140f)
+    let AggroColor = Color(255f, 0f, 0f)
+
+    
 module InputActions =
 
     [<Literal>]

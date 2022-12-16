@@ -4,56 +4,85 @@ open Common.Constants
 open Common.Types
 open Godot
 
+[<Signal>]
+type TargetReached = delegate of unit -> unit
 
-type PauserFs() =
-    inherit Godot.Node()
+[<Signal>]
+type PathChanged = delegate of Vector2[] -> unit
 
-    member this.Label = this.GetNode<Label>(new NodePath("PauseText")) 
-
-    member private this.TogglePause() = 
-        this.GetTree().Paused <- not(this.GetTree().Paused)
-        this.GetTree().Paused 
-
-    member this.PauseCheck() = 
+type NavClient2D() =
+    inherit NavigationAgent2D()    
+    member this.pathChanged:option<(Vector2[]->unit)> = None
+    member this.targetReached:option<(unit->unit)> = None    
+    member this.velocityComputed:option<(Vector2->unit)> = None    
+    member this.moveToTarget:option<(Vector2->unit)> = None
+    
+    member val Velocity = Vector2(0.0f,0.0f) with get, set
+    
+    member val OwnerBody:KinematicBody2D = null with get,set
+    
+    [<Export>]
+    member val Speed:float32 = 10f with get,set
         
-        match Input.IsActionJustPressed(InputActions.Pause) with 
-        | true -> 
-            match this.TogglePause() with
-            | true -> this.Label.Show()
-            | false -> this.Label.Hide()
-        | _ ->  ignore()
+    [<Export>]     
+    member val TargetPath:NodePath = null with get,set
+    
+    [<Export>] 
+    member val Target: KinematicBody2D = null with get, set    
+    
+    member this.hasArrivedAtTarget =
+         base.IsNavigationFinished()
 
-    override this._Ready()=
-        this.Label.Hide()
-        this.GetTree().Paused <- false
+    member this.onPathChanged() =
+        this.EmitSignal(nameof(PathChanged))
+        
+    member this.onVelocityComputed safeVelocity =                
+        match this.velocityComputed with
+        | Some vc -> vc safeVelocity
+        | None ->()
+        
+        if this.hasArrivedAtTarget then
+            this.EmitSignal(nameof(TargetReached), Array.empty<Vector2>)
+            this.EmitSignal(nameof(TargetReached))
+        else
+            match this.moveToTarget with
+            | Some movToTarget -> movToTarget safeVelocity
+            | _-> failwith "Missing required move to target callback"
 
-    override this._Process(delta) = 
-        this.PauseCheck()
-
-type RollingCameraFs() =
-    inherit KinematicBody2D()
-
-    member val CurrentMoveDirection =  MoveDirection.Up with get, set
-
-    [<Export>]
-    member val IsEnabled = true with get, set
-
-    [<Export>]
-    member val CurrentVelocity = Vector2.Zero with get, set
-
-    member this.GetVelocityInMoveDirection() =
-        this.CurrentMoveDirection.GetVelocityInMoveDirection this.CurrentVelocity this.Speed
-
-    [<Export>]
-    member val Speed = 20f with get, set
-
-    override this._PhysicsProcess(delta) =
-        if this.IsEnabled then 
-            this.GetVelocityInMoveDirection()
-            |> this.MoveAndSlide
-            |> ignore
-
-
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+    // member this.processMovement()=
+    //     let moveDirection = this.Owner.Pos Position.DirectionTo(NavAgent.GetNextLocation());
+    //         Velocity = moveDirection * Speed;
+    //         NavAgent.SetVelocity(Velocity);
+    //         SetTargetLocation(Target.GlobalPosition);
+    member this.getDirectionToTarget()=
+        this.OwnerBody.Position.DirectionTo(this.GetNextLocation())
+    
+    member this.setNavServerEdgeConnectionMargin margin =
+        let rids = Navigation2DServer.GetMaps()
+        for ridObj in rids do
+            Navigation2DServer.MapSetEdgeConnectionMargin((ridObj:?>RID), margin)
+        ()
+    
+    override this._Ready() =
+        this.OwnerBody <- this.GetOwner<KinematicBody2D>()
+        let pathChangedSignal ="path_changed"
+        let velocityComputedSignal ="velocity_computed"
+        this.setNavServerEdgeConnectionMargin 400f
+        match this.Connect(pathChangedSignal , this, nameof(this.onPathChanged)) with
+        | Error.Ok ->()
+        | err -> failwith ("Signal " + pathChangedSignal + "Failed to connect in NavClient2D with err code " + err.ToString() )
+        match this.Connect(velocityComputedSignal, this, nameof(this.onVelocityComputed)) with
+        | Error.Ok ->()
+        | err -> failwith ("Signal " + velocityComputedSignal + "Failed to connect in NavClient2D with err code " + err.ToString() )
+        match this.TargetPath with
+        | null -> this.SetTargetLocation this.OwnerBody.Position
+        | targetPath ->
+            this.Target <- this.GetNode<KinematicBody2D>(targetPath)
+            this.SetTargetLocation  this.Target.GlobalPosition
+        
+        
+        
+    override this._PhysicsProcess _ =
+        this.Velocity <- this.getDirectionToTarget() * this.Speed;
+        this.SetVelocity(this.Velocity)
+        this.SetTargetLocation(this.Target.GlobalPosition);

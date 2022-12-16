@@ -193,7 +193,7 @@ module Extensions =
             }
 
         member this.toArray<'a>() =
-            let arr = Array.zeroCreate<'a> (this.Count)
+            let arr = Array.zeroCreate<'a> this.Count
 
             for i = 0 to this.Count do
                 arr[i] <- (this.Item(i) :?> 'a)
@@ -248,7 +248,7 @@ module Extensions =
         member inline this.GetOwnerAs<'a when 'a :> Node>() = this.Owner :?> 'a
 
         member this.GetNode<'a when 'a :> Node and 'a: not struct>(path: string) =
-            lazy (this.GetNode<'a>(new NodePath(path)))
+            lazy this.GetNode<'a>(new NodePath(path))
 
         member this.getChildren() = this.GetChildren() |> Seq.cast<Node>
 
@@ -269,7 +269,7 @@ module Extensions =
             let angle = this.Rotation - Mathf.Pi / 2f
 
             let dir =
-                new Vector2(cos (angle), - sin(angle))
+                new Vector2(cos angle, - sin(angle))
 
             this.FireInDirection dir speed delta
 
@@ -286,7 +286,7 @@ module Extensions =
             GD.Print(msg + " Postion x, y :", this.GlobalPosition.x.ToString(), this.GlobalPosition.y.ToString())
 
         member this.GetNodeLazy<'a when 'a :> Node and 'a: not struct>(path: string) =
-            lazy (this.GetNode<'a>(new NodePath(path)))
+            lazy this.GetNode<'a>(new NodePath(path))
 
     type Vector3 with
         member this.WithX(newX) = Vector3(newX, this.y, this.z)

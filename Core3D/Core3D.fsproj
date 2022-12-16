@@ -6,16 +6,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Library.fs"/>
+        <Compile Include="Library.fs" />
+        <Compile Include="Components.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="GodotSharp">
-            <HintPath>..\..\Assemblies\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
-        </Reference>
-        <Reference Include="GodotSharpEditor">
-            <HintPath>..\..\Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
-        </Reference>
+      <Reference Include="GodotSharp">
+        <HintPath>..\Assemblies\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Common\Common\Common.fsproj" />
+    </ItemGroup>
+    
 </Project>

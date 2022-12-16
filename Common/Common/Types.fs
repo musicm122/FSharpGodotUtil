@@ -19,10 +19,10 @@ type MoveDirection =
         | Right -> Vector2(velocity.x + speed, 0f)
         | Up ->  Vector2(0f, velocity.y - speed)
         | Down -> Vector2(0f, velocity.y + speed)
-        | UpLeft -> Vector2(velocity.x - halfSpeed, velocity.y - (halfSpeed))
-        | UpRight -> Vector2(velocity.x + halfSpeed, velocity.y - (halfSpeed))
-        | DownRight -> Vector2(velocity.x + halfSpeed, velocity.y + (halfSpeed))
-        | DownLeft -> Vector2(velocity.x - halfSpeed, velocity.y + (halfSpeed))
+        | UpLeft -> Vector2(velocity.x - halfSpeed, velocity.y - halfSpeed)
+        | UpRight -> Vector2(velocity.x + halfSpeed, velocity.y - halfSpeed)
+        | DownRight -> Vector2(velocity.x + halfSpeed, velocity.y + halfSpeed)
+        | DownLeft -> Vector2(velocity.x - halfSpeed, velocity.y + halfSpeed)
 
 
 type MissingSignalField =
