@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <TargetFramework>net472</TargetFramework>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Compile Include="Library.fs" />
+        <Compile Include="StateMachine.fs" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="GodotSharp">
+        <HintPath>..\Assemblies\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
+      </Reference>
+      <Reference Include="GodotSharpEditor">
+        <HintPath>..\Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
