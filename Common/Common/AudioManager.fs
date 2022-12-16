@@ -34,15 +34,13 @@ type AudioManager() =
         channel.Autoplay <- true
         channel.Bus <- busName
 
-        let args =
-            Some(new Godot.Collections.Array(channel))
+        let args = Some(new Godot.Collections.Array(channel))
 
         //let connection = { SignalConnection.Default(Signals.AudioStreamPlayer.Finished, this, nameof this.onStreamFinished, channel) with args = args }
         // channel.Connect("finished", this, nameof(this.onStreamFinished), new Godot.Collections.Array(channel)) with
 
         //match channel.TryConnectSignal(connection) with
-        match channel.Connect("finished", this, nameof this.onStreamFinished, new Godot.Collections.Array(channel))
-            with
+        match channel.Connect("finished", this, nameof this.onStreamFinished, new Godot.Collections.Array(channel)) with
         | err when err = Error.Ok -> channel
         | ex ->
             let gEx =
@@ -63,15 +61,13 @@ type AudioManager() =
         ignore
 
     member this.hasWork =
-        AudioManager.queue.Count > 0
-        && AudioManager.freeChannels.Count > 0
+        AudioManager.queue.Count > 0 && AudioManager.freeChannels.Count > 0
 
     override this._Ready() = this.initializeChannels ()
 
     override this._Process delta =
         if this.hasWork then
-            let player =
-                AudioManager.freeChannels.Dequeue()
+            let player = AudioManager.freeChannels.Dequeue()
 
             player.Stream <- Godot.GD.Load<AudioStream>(AudioManager.queue.Dequeue())
             player.Play()

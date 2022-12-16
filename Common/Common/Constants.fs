@@ -3,12 +3,12 @@
 open Godot
 
 
-module CommonColors =    
+module CommonColors =
     let WarningColor = Color(255f, 255f, 0f)
     let IdleColor = Color(140f, 140f, 140f)
     let AggroColor = Color(255f, 0f, 0f)
 
-    
+
 module InputActions =
 
     [<Literal>]
@@ -37,7 +37,7 @@ module InputActions =
 
     [<Literal>]
     let ChangeMouseInput = "change_mouse_input"
-    
+
     [<Literal>]
     let Pause = "pause"
 
@@ -53,8 +53,7 @@ module InputActions =
            ChangeMouseInput |]
 
 module SignalUtil =
-    let CustomSignalArray =
-        [| "dialogic_signal"; "hit" |]
+    let CustomSignalArray = [| "dialogic_signal"; "hit" |]
 
     let MasterSignalArray =
         [| "script_changed"
@@ -254,5 +253,4 @@ module SignalUtil =
            "server_disconnected"
            "tree_changed" |]
 
-    let AllSignals =
-        Array.append CustomSignalArray MasterSignalArray
+    let AllSignals = Array.append CustomSignalArray MasterSignalArray

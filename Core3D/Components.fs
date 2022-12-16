@@ -9,6 +9,7 @@ open Godot
 [<Tool>]
 type PlayerConfigFS() =
     inherit Resource()
+
     [<Export>]
     member val gravityMultiplier = 3.0f with get, set
 
@@ -20,15 +21,14 @@ type PlayerConfigFS() =
 
     [<Export>]
     member val deceleration = 10.0f with get, set
-    
+
     [<Export(PropertyHint.Range, "0.01,100,0.01")>]
     member val airControl = 0.3f with get, set
-    
+
     [<Export>]
     member val jumpHeight = 10.0f with get, set
 
-    static member Default() : PlayerConfigFS =
-        new PlayerConfigFS()        
+    static member Default() : PlayerConfigFS = new PlayerConfigFS()
 
 
 [<AllowNullLiteral>]
@@ -36,10 +36,10 @@ type MovementControllerFS() =
     inherit KinematicBody()
 
     member val CanMove = true with get, set
-    
+
     [<Export>]
-    member val playerConfig = PlayerConfigFS.Default() with get,set       
-        
+    member val playerConfig = PlayerConfigFS.Default() with get, set
+
     member val inputAxis = Vector2.Zero with get, set
     member val direction = Vector3.Zero with get, set
     member val velocity = Vector3.Zero with get, set
@@ -60,8 +60,7 @@ type MovementControllerFS() =
         ()
 
     member this.getCurrentSnap(delta: float32) =
-        - this.GetFloorNormal()
-        - this.GetFloorVelocity() * delta
+        - this.GetFloorNormal() - this.GetFloorVelocity() * delta
 
     override this._PhysicsProcess delta =
 
@@ -80,10 +79,7 @@ type MovementControllerFS() =
             this.MoveAndSlideWithSnap(velocity, this.snap, this.upDirection, this.stopOnSlope, 4, this.floorMaxAngle)
 
         let inline slopeVelocityCheck (vel: Vector3) =
-            if vel.y < 0.0f then
-                vel.WithY(0.0f)
-            else
-                vel
+            if vel.y < 0.0f then vel.WithY(0.0f) else vel
 
         this.inputAxis <- InputUtil.getInputAxis ()
         this.direction <- InputUtil.getDirectionInput this.GlobalTransform.basis this.inputAxis
@@ -102,8 +98,7 @@ type MovementControllerFS() =
                 this.velocity <- this.velocity.WithY(this.playerConfig.jumpHeight)
         | false ->
             // Workaround for 'vertical bump' when going off platform
-            if this.snap <> Vector3.Zero
-               && this.velocity.y <> 0.0f then
+            if this.snap <> Vector3.Zero && this.velocity.y <> 0.0f then
                 this.velocity <- this.velocity.WithY(0f)
 
             this.snap <- Vector3.Zero
@@ -138,24 +133,16 @@ type HeadFS() =
     member this.CameraUpdate() =
         //let newY = this.mouseAxis.x * this.mouseSensitivity
         //let newX = Mathf.Clamp(this.rot.x - this.mouseAxis.y  * this.mouseSensitivity, (-this.yLimit), this.yLimit)
-        let newY =
-            this.mouseAxis.x * this.mouseSensitivity
+        let newY = this.mouseAxis.x * this.mouseSensitivity
 
         let newX =
-            Mathf.Clamp(
-                this.rot.x
-                - this.mouseAxis.y * this.mouseSensitivity,
-                (-this.yLimit),
-                this.yLimit
-            )
+            Mathf.Clamp(this.rot.x - this.mouseAxis.y * this.mouseSensitivity, (-this.yLimit), this.yLimit)
 
         this.rot <- this.rot.SubFromY(newY).WithX(newX)
 
-        let ownerRotation =
-            this.GetOwnerAsSpatial().Rotation
+        let ownerRotation = this.GetOwnerAsSpatial().Rotation
 
-        let newOwnerRotation =
-            ownerRotation.WithY(this.rot.y)
+        let newOwnerRotation = ownerRotation.WithY(this.rot.y)
 
         this.GetOwnerAsSpatial().Rotation <- newOwnerRotation
         this.Rotation <- this.Rotation.WithX(this.rot.x)
@@ -222,8 +209,7 @@ type SprintFS() =
             let lerpWeight = 8.0f
             CameraUtil.calculateCameraFieldOfView this.camera.Fov lerpTo lerpWeight delta
 
-        let multipliedFov =
-            (this.normalFov * this.fovMultiplier)
+        let multipliedFov = (this.normalFov * this.fovMultiplier)
 
         match this.canSprint this.controller with
         | true ->

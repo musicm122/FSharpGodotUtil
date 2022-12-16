@@ -7,6 +7,7 @@ open Godot
 module Extensions =
 
     type Godot.Object with
+
         member this.TryConnectSignal(signalConnection: SignalConnection) =
             //this.Connect("body_entered", this, nameof this.OnExaminableBodyEntered)
 
@@ -16,11 +17,9 @@ module Extensions =
             match result with
             | Error.Ok -> result
             | err ->
-                let msg =
-                    signalConnection.getSigFailMessage err
+                let msg = signalConnection.getSigFailMessage err
 
-                let ex =
-                    GodotSignalConnectionFailure(signalConnection, err)
+                let ex = GodotSignalConnectionFailure(signalConnection, err)
 
                 GD.PrintErr(msg, ex)
                 GD.PrintStack()
@@ -39,6 +38,7 @@ module Extensions =
                 raise (GodotSignalDisconnectionFailure(signalConnection, SignalDisconnectionProblem.OtherException ex))
 
     type Area with
+
         member this.ConnectAreaEntered target methodName =
             { methodName = methodName
               target = target
@@ -154,16 +154,15 @@ module Extensions =
             |> this.TryDisconnectSignal
 
     type InputEventMouseButton with
+
         member this.isMouseButtonPressed(btnListItem: ButtonList) =
             this.ButtonIndex = int btnListItem && this.Pressed
 
         member this.isMouseButtonDoubleClicked(btnListItem: ButtonList) =
-            this.ButtonIndex = int btnListItem
-            && this.Doubleclick
+            this.ButtonIndex = int btnListItem && this.Doubleclick
 
         member this.isMouseButtonReleased(btnListItem: ButtonList) =
-            this.ButtonIndex = int btnListItem
-            && this.Pressed = false
+            this.ButtonIndex = int btnListItem && this.Pressed = false
 
         member this.isLeftButtonPressed() =
             this.isMouseButtonPressed ButtonList.Left
@@ -182,6 +181,7 @@ module Extensions =
 
 
     type Godot.Collections.Array with
+
         member this.toList<'a>() =
             [ for item in this do
                   item :?> 'a ]
@@ -226,6 +226,11 @@ module Extensions =
             result
 
     type SceneTree with
+
+        member this.getGlobalPositionOfNode2d nodeName =
+            (this.CurrentScene.FindNode(nodeName) :?> Node2D)
+                .GlobalPosition
+
         member this.getNodesByType<'a>() =
             this
                 .CurrentScene
@@ -236,6 +241,14 @@ module Extensions =
                     | _ -> false)
 
     type Node with
+
+        member this.IsPaused() = this.GetTree().Paused
+
+        member this.Pause() = this.GetTree().Paused = true
+        member this.Unpause() = this.GetTree().Paused = false
+
+        member this.TogglePause() =
+            this.GetTree().Paused = (this.GetTree().Paused) |> not
 
         member this.ReloadScene() = this.GetTree().ReloadCurrentScene()
 
@@ -248,28 +261,18 @@ module Extensions =
         member inline this.GetOwnerAs<'a when 'a :> Node>() = this.Owner :?> 'a
 
         member this.GetNode<'a when 'a :> Node and 'a: not struct>(path: string) =
-            lazy this.GetNode<'a>(new NodePath(path))
+            lazy (this.GetNode<'a>(new NodePath(path)))
 
         member this.getChildren() = this.GetChildren() |> Seq.cast<Node>
 
     type Node2D with
-
-        (*let drawCircleArcPoly (center:Vector2) (radius:float32) (angleFrom:float32) (angleTo:float32) (color:Color) =
-                let nbPoints = 32
-                let pointsArc =  Array.zeroCreate 32
-                pointsArc[0] = center
-                let colors = [| color |]
-                [ 0 .. nbPoints ].
-                this.DrawLine
-            *)
 
         member this.FireInDirection dir speed delta = this.Translate(dir * speed * delta)
 
         member this.FireAtAngle (dir: Vector2) (speed: float32) (delta: float32) =
             let angle = this.Rotation - Mathf.Pi / 2f
 
-            let dir =
-                new Vector2(cos angle, - sin(angle))
+            let dir = new Vector2(cos angle, - sin(angle))
 
             this.FireInDirection dir speed delta
 
@@ -286,9 +289,44 @@ module Extensions =
             GD.Print(msg + " Postion x, y :", this.GlobalPosition.x.ToString(), this.GlobalPosition.y.ToString())
 
         member this.GetNodeLazy<'a when 'a :> Node and 'a: not struct>(path: string) =
-            lazy this.GetNode<'a>(new NodePath(path))
+            lazy (this.GetNode<'a>(new NodePath(path)))
+
+    type Vector2 with
+
+        member this.WithX(newX) = Vector2(newX, this.y)
+
+        member this.AddToX(newX) = Vector2(this.x + newX, this.y)
+        member this.SubToX(newX) = Vector2(this.x - newX, this.y)
+
+        member this.WithY(newY) = Vector2(this.x, newY)
+
+        member this.AddToY(newY) = Vector2(this.x, this.y + newY)
+        member this.SubFromY(newY) = Vector2(this.x, this.y - newY)
+
+        member this.Add(v2: Vector2) =
+            let x = this.x + v2.x
+            let y = this.y + v2.y
+            Vector2(x, y)
+
+        member this.Subtract(v2: Vector2) =
+            let x = this.x - v2.x
+            let y = this.y - v2.y
+            Vector2(x, y)
+
+
+        member this.rotateCounterClockwiseByAngle radianAngle =
+            //x' = x cos θ − y sin θ
+            //y' = x sin θ + y cos θ
+            //newX = oldX * cos(angle) - oldY * sin(angle)
+            //newY = oldX * sin(angle) + oldY * cos(angle)
+            let newX = (this.x * Mathf.Cos(radianAngle)) - (this.y * Mathf.Sin(radianAngle))
+            let newY = (this.x * Mathf.Sin(radianAngle)) + (this.y * Mathf.Cos(radianAngle))
+            Vector2(newX, newY)
+
+
 
     type Vector3 with
+
         member this.WithX(newX) = Vector3(newX, this.y, this.z)
 
         member this.AddToX(newX) = Vector3(this.x + newX, this.y, this.z)
@@ -317,6 +355,7 @@ module Extensions =
             Vector3(x, y, z)
 
     type KinematicCollision with
+
         member this.ColliderIsInGroup(groupName: string) : bool =
             if this <> null then
                 let body = this.Collider :?> PhysicsBody
@@ -325,6 +364,7 @@ module Extensions =
                 false
 
     type KinematicBody with
+
         member this.GetAllColliders() : Option<seq<KinematicCollision>> =
             if this = null then
                 Option.None

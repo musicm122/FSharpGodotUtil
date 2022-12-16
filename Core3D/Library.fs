@@ -11,11 +11,9 @@ module PauseEvents =
 module DialogEvents =
     let DialogInteractionStart = Event<unit>()
 
-    let DialogInteractionComplete =
-        Event<unit>()
+    let DialogInteractionComplete = Event<unit>()
 
-    let PlayerInteractionAvailabilityChange =
-        Event<bool>()
+    let PlayerInteractionAvailabilityChange = Event<bool>()
 
 
 module CameraUtil =
@@ -35,8 +33,7 @@ module PhysicsUtil =
         (delta: float32)
         =
         //# Using only the horizontal velocity, interpolate towards the input.
-        let mutable tempV =
-            currentVelocity.WithY(0f)
+        let mutable tempV = currentVelocity.WithY(0f)
 
         let mutable acc = 0f
         let target = direction * speed
@@ -47,8 +44,7 @@ module PhysicsUtil =
             else
                 deceleration
 
-        if isOnFloor = false then
-            acc <- acc * airControl
+        if isOnFloor = false then acc <- acc * airControl
 
         tempV <- tempV.LinearInterpolate(target, acc * delta)
 
