@@ -7,20 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Constants.fs"/>
-        <Compile Include="Types.fs"/>
-        <Compile Include="Util.fs"/>
-        <Compile Include="Interfaces.fs"/>
-        <Compile Include="Extensions.fs"/>
-        <Compile Include="Validation.fs"/>
-        <Compile Include="AudioManager.fs"/>
-        <Compile Include="StateMachine.fs"/>
-        <Compile Include="Camera.fs"/>
+        <Compile Include="Reader.fs" />
+        <Compile Include="Constants.fs" />
+        <Compile Include="Util.fs" />
+        <Compile Include="Interfaces.fs" />
+        <Compile Include="Types.fs" />
+        <Compile Include="Extensions.fs" />
+        <Compile Include="Validation.fs" />
+        <Compile Include="Services\ThirdParty\Dialogic.fs" />
+        <Compile Include="Services\DialogManager.fs" />
+        <Compile Include="Services\AudioManager.fs" />
+        <Compile Include="Services\Log.fs" />
+        <Compile Include="Services\Global.fs" />
+        <Compile Include="Services\env.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Godot.Signals" Version="3.4.1"/>
-        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3"/>
+        <PackageReference Include="Godot.Signals" Version="3.4.1" />
+        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3" />
     </ItemGroup>
 
     <ItemGroup>

@@ -6,8 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Library.fs"/>
-        <Compile Include="Components.fs"/>
+        <Compile Include="Library.fs" />
+        <Compile Include="Components.fs" />
+        <Compile Include="ThirdParty\Dialogic.fs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -17,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Common\Common\Common.fsproj"/>
+        <ProjectReference Include="..\Common\Common\Common.fsproj" />
     </ItemGroup>
 
 </Project>

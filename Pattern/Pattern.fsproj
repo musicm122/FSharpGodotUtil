@@ -8,7 +8,7 @@
     
     <ItemGroup>
         <Compile Include="Library.fs" />
-        <Compile Include="StateMachine.fs" />
+        <Compile Include="StateMachineNode.fs" />
     </ItemGroup>
     
     <ItemGroup>
@@ -18,6 +18,10 @@
       <Reference Include="GodotSharpEditor">
         <HintPath>..\Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
       </Reference>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Common\Common\Common.fsproj" />
     </ItemGroup>
 
 </Project>

@@ -263,7 +263,7 @@ module Extensions =
         member this.GetNode<'a when 'a :> Node and 'a: not struct>(path: string) =
             lazy (this.GetNode<'a>(new NodePath(path)))
 
-        member this.getChildren() = this.GetChildren() |> Seq.cast<Node>
+        member this.getChildrenOfSeq() = this.GetChildren() |> Seq.cast<Node>
 
     type Node2D with
 

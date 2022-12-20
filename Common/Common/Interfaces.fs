@@ -24,10 +24,6 @@ type IExaminer =
     abstract member PlayerInteractingAvailable: IEvent<unit>
     abstract member PlayerInteractingUnavailable: IEvent<unit>
 
-[<Interface>]
-type ILogger =
-    abstract debug: obj [] -> unit
-    abstract error: obj [] -> unit
 
 [<Interface>]
 type IDialogManager =
