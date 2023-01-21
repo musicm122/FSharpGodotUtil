@@ -61,8 +61,7 @@ type HurtBoxFs() =
     member this.InvincibleEndedEvent = (this :> IHurtBox).InvincibleEndedEvent
 
 
-    member this.appendTimerSignals(currentTimer: Timer option) =
-        //this.Timer <- this.getNodeOption<Timer>(timerPath)
+    member this.AppendTimerSignals(currentTimer: Timer option) =
         match currentTimer with
         | Some timer ->
             let conn =
@@ -81,17 +80,16 @@ type HurtBoxFs() =
 
         currentTimer
 
-    member this.instantiateTimer path =
-        this.GetNodeOption<Timer> (path) |> this.appendTimerSignals
+    member this.InstantiateTimer path =
+        this.GetNodeOption<Timer> (path) |> this.AppendTimerSignals
 
-
-    member this.instantiateCollisionShape path =
+    member this.InstantiateCollisionShape path =
         this.GetNodeOption<CollisionShape2D> (path)
 
     member this.StartInvincibility() = (this :> IHurtBox).StartInvincibility
 
     override this._Ready() =
-        this.Timer <- this.instantiateTimer "Timer"
+        this.Timer <- this.InstantiateTimer "Timer"
         this.CollisionShape <- this.GetNodeOption<CollisionShape2D> "CollisionShape"
 
     //todo: properly dispose of event handlers on cleanup
@@ -137,12 +135,6 @@ type HurtBoxFs() =
                 timer.Start()
                 invincibleStartedEvent.Trigger()
             | None -> GD.PrintErr("Timer not set on Hurtbox owned by " + this.Owner.Name)
-
-        (*
-        let invincibleStartedEvent = Event<unit>()
-        let invincibilityEndedEvent = Event<unit>()
-
-        *)
         member this.InvincibleEndedEvent
             with get () = invincibilityEndedEvent
             and set value = invincibilityEndedEvent <- value

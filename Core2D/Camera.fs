@@ -33,17 +33,12 @@ type PlayerCameraFs() =
     inherit Camera2D()
 
     member val CurrentShake: ScreenShakeInstance = ScreenShakeInstance.Default() with get, set
-
-    //member val duration = 0.0 with get, set
-    //member val period_in_ms = 0.0 with get, set
-    //member val amplitude = 0.0 with get, set
-    //member val timer = 0.0 with get, set
     member val last_shook_timer = 0f with get, set
     member val previous_x = 0.0f with get, set
     member val previous_y = 0.0f with get, set
     member val last_offset = Vector2.Zero with get, set
 
-    member this.scheduleShake(shake: ScreenShakeInstance) : unit =
+    member this.ScheduleShake(shake: ScreenShakeInstance) : unit =
         this.CurrentShake <- shake
         this.previous_x <- MathUtils.getRandomInRange -1.0f 1.0f
         this.Offset <- this.Offset - this.last_offset

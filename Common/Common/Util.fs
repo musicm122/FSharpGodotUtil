@@ -1,6 +1,7 @@
 ﻿namespace Common.Uti
 
 open System
+open System.Collections.Generic
 open Common.Constants
 open Godot
 open Microsoft.FSharp.Reflection
@@ -14,19 +15,36 @@ module EnumUtil =
         | true, value -> Some value
         | _ -> None
 
-    let getDescription<'T when 'T: enum<int> and 'T: struct and 'T :> ValueType and 'T: (new: unit -> 'T)> enumVal =
+    
+    let getDescription (enumVal:Enum) =
         let field = enumVal.GetType().GetField(enumVal.ToString())
-
-        match field with
-        | null -> String.Empty
-        | _ ->
-            let attrib =
-                field.GetCustomAttribute(typeof<DescriptionAttribute>) :?> DescriptionAttribute
-
+        let attrib =
+            field.GetCustomAttribute(typeof<DescriptionAttribute>) :?> DescriptionAttribute
+        if isNull attrib then
+            String.Empty
+        else
             attrib.Description
 
+    let toList<'A>() =
+        let enumType = typeof<'A>
+        if enumType.BaseType <> typeof<Enum> then
+            invalidArg "toList" "'A must be of type System.Enum"        
+                
+        let enumVals = Enum.GetValues(enumType)
+        let enumValList = List<'A>(enumVals.Length);
+         // foreach (int val in enumValArray) enumValList.Add((T)System.Enum.Parse(enumType, val.ToString()));
 
-
+        for enum in enumVals do
+            enumValList.Add(Enum.Parse(enumType, enum.ToString()) :?> 'A)
+           
+        enumValList
+    
+    let enumCount<'A>() =
+        let enumType = typeof<'A>
+        if enumType.BaseType <> typeof<Enum> then
+            invalidArg "enumCount" "'A must be of type System.Enum"        
+        Enum.GetNames(typeof<'A>).Length;        
+        
 module InputUtil =
 
     let getDirectionInput (globalBasis: Basis) (inputAxis: Vector2) =

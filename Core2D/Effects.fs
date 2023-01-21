@@ -19,8 +19,7 @@ type BloodSpatterFS() =
 
     member this.OnTimeout() = this.QueueFree()
 
-    member this.updateDirection() =
-        //let targetPos = this.getGlobalPositionOfNode2d this.TargetNodePath
+    member this.UpdateDirection() =
         let targetPos = this.TargetGlobalPosition
 
         if targetPos.x > this.GlobalPosition.x then
@@ -35,5 +34,5 @@ type BloodSpatterFS() =
         this.Timer.Connect(Signals.Timer.Timeout, this, nameof (this.OnTimeout))
         |> ignore
 
-        this.updateDirection ()
+        this.UpdateDirection ()
         this.Emitting <- true

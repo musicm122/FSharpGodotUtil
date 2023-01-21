@@ -49,7 +49,7 @@ type StateMachine() =
     member this.TransitionToEnum<'T when 'T: enum<int> and 'T: struct and 'T :> ValueType and 'T: (new: unit -> 'T)>
         enumVal
         =
-        let description = enumVal |> EnumUtil.getDescription<'T>
+        let description = enumVal |> EnumUtil.getDescription
 
         if String.IsNullOrWhiteSpace(description) then
             failwith "State enum missing description!"

@@ -32,17 +32,12 @@ type AudioManager() =
             GD.PrintErr([ex,"AudioManager Exception thrown while playing sound:"+ streamName])
             failwith ex.Message
 
-    member this.initializeChannel busName =
+    member this.InitializeChannel busName =
         let channel = new AudioStreamPlayer()
         channel.Autoplay <- true
         channel.Bus <- busName
 
         let args = Some(new Godot.Collections.Array(channel))
-
-        //let connection = { SignalConnection.Default(Signals.AudioStreamPlayer.Finished, this, nameof this.onStreamFinished, channel) with args = args }
-        // channel.Connect("finished", this, nameof(this.onStreamFinished), new Godot.Collections.Array(channel)) with
-
-        //match channel.TryConnectSignal(connection) with
         match channel.Connect("finished", this, nameof this.onStreamFinished, new Godot.Collections.Array(channel)) with
         | err when err = Error.Ok -> channel
         | ex ->
@@ -54,8 +49,8 @@ type AudioManager() =
 
             raise gEx
 
-    member this.initializeChannels =
-        let initChannelOnMaster _ = this.initializeChannel Bus
+    member this.InitializeChannels =
+        let initChannelOnMaster _ = this.InitializeChannel Bus
 
         [ 0..TotalChannels ]
         |> List.map initChannelOnMaster
@@ -63,14 +58,14 @@ type AudioManager() =
 
         ignore
 
-    member this.hasWork =
+    member this.HasWork =
         AudioManager.queue.Count > 0 && AudioManager.freeChannels.Count > 0
 
-    override this._Ready() = this.initializeChannels ()
+    override this._Ready() = this.InitializeChannels ()
 
     override this._Process delta =
         try
-            if this.hasWork then
+            if this.HasWork then
                 let player = AudioManager.freeChannels.Dequeue()
 
                 player.Stream <- GD.Load<AudioStream>(AudioManager.queue.Dequeue())

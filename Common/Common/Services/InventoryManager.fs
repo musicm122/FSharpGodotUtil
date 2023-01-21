@@ -17,84 +17,84 @@ type ItemCategory =
     | Other
 
 type CurrencyDefinition =
-    { id: Guid
-      name: string
-      description: string
-      maxCarryAmount: int
-      pickupSoundPath: option<string>
-      imagePath: option<string> }
+    { Id: Guid
+      Name: string
+      Description: string
+      MaxCarryAmount: int
+      PickupSoundPath: option<string>
+      ImagePath: option<string> }
 
 type ItemDefinition =
-    { category: ItemCategory
-      id: Guid
-      name: string
-      description: string
-      maxCarryAmount: int
-      weight: float32
-      pickupSoundPath: option<string>
-      usageSoundPath: option<string>
-      imagePath: option<string> }
+    { Category: ItemCategory
+      Id: Guid
+      Name: string
+      Description: string
+      MaxCarryAmount: int
+      Weight: float32
+      PickupSoundPath: option<string>
+      UsageSoundPath: option<string>
+      ImagePath: option<string> }
 
     static member Default =
-        { id = Guid.NewGuid()
-          category = ItemCategory.Other
-          name = ""
-          description = ""
-          maxCarryAmount = 99
-          weight = 1.0f
-          pickupSoundPath = None
-          usageSoundPath = None
-          imagePath = None }
+        { Id = Guid.NewGuid()
+          Category = ItemCategory.Other
+          Name = ""
+          Description = ""
+          MaxCarryAmount = 99
+          Weight = 1.0f
+          PickupSoundPath = None
+          UsageSoundPath = None
+          ImagePath = None }
 
 type ItemInstance =
-    { definition: ItemDefinition
-      count: int }
+    { Definition: ItemDefinition
+      Count: int }
 
-    static member Default(definition) = { definition = definition; count = 1 }
+    static member Default(definition) = { Definition = definition; Count = 1 }
 
 type InventoryEventArgs(item: ItemInstance) =
-    inherit System.EventArgs()
+    inherit EventArgs()
     member this.Item = item
 
 type IInventoryManager =
-    abstract member addItemEvent: Event<InventoryEventArgs>
-    abstract member removeItemEvent: Event<InventoryEventArgs>
+    abstract member AddItemEvent: Event<InventoryEventArgs>
+    abstract member RemoveItemEvent: Event<InventoryEventArgs>
 
     [<CLIEvent>]
-    abstract onAddItemEventHandler: IEvent<InventoryEventArgs>
+    abstract OnAddItemEventHandler: IEvent<InventoryEventArgs>
 
     [<CLIEvent>]
-    abstract onRemoveItemEventHandler: IEvent<InventoryEventArgs>
+    abstract OnRemoveItemEventHandler: IEvent<InventoryEventArgs>
 
-    abstract member addItems: ItemInstance -> int -> unit
-    abstract member removeItems: ItemInstance -> int -> unit
-    abstract member hasItemInInventory: string -> bool
-    abstract member hasMinimumAmountOfItem: string -> int -> bool
-    abstract member getItemsOfCategory: ItemCategory -> IEnumerable<ItemInstance>
-    abstract member getAllItems: unit -> IEnumerable<ItemInstance>
+    abstract member AddItems: ItemInstance -> int -> unit
+    abstract member RemoveItems: ItemInstance -> int -> unit
+    abstract member HasItemInInventory: string -> bool
+    abstract member HasMinimumAmountOfItem: string -> int -> bool
+    abstract member GetItemsOfCategory: ItemCategory -> IEnumerable<ItemInstance>
+    abstract member GetAllItems: unit -> IEnumerable<ItemInstance>
 
 type IDatabase =
     //abstract member saveItem: item: ItemDefinition -> SaveSta
-    abstract member findById: id: Guid -> Option<ItemDefinition>
-    abstract member getByCategory: category: ItemCategory -> IEnumerable<ItemDefinition>
-    abstract member getAllDefinitions: unit -> IEnumerable<ItemDefinition>
+    abstract member FindById: id: Guid -> Option<ItemDefinition>
+    abstract member GetByCategory: category: ItemCategory -> IEnumerable<ItemDefinition>
+    abstract member GetAllDefinitions: unit -> IEnumerable<ItemDefinition>
 
 type JsonItemDatabase(jsonFilePath: string) =
     let db = readOnlyDict []
 
-    member this.findById id = (this :> IDatabase).findById id
+    member this.FindById id = (this :> IDatabase).FindById id
 
-    member this.getByCategory category =
-        (this :> IDatabase).getByCategory category
+    member this.GetByCategory category =
+        (this :> IDatabase).GetByCategory category
 
-    member this.all = (this :> IDatabase).getAllDefinitions ()
+    member this.All = (this :> IDatabase).GetAllDefinitions ()
 
-    member this.rawJson =
+    member this.RawJson =
         let vals = db.Values |> Seq.map Json.serialize
         let out = vals |> String.concat ("," + Environment.NewLine)
         "[" + out + "]"
 
-    member this.updateFile =
+    member this.UpdateFile =
         try
             // let options = new FileStreamOptions()
             // options.Mode <- FileMode.OpenOrCreate
@@ -102,18 +102,18 @@ type JsonItemDatabase(jsonFilePath: string) =
             // options.Access <- FileAccess.Write
             //use sw = new StreamWriter(jsonFilePath,options)
             use sw = new StreamWriter(jsonFilePath)
-            sw.Write this.rawJson
+            sw.Write this.RawJson
             DatabaseSaveStatus.Success
         with
         | ex -> DatabaseSaveStatus.Failure ex.Message
 
     interface IDatabase with
-        member this.getAllDefinitions() = db.Values
+        member this.GetAllDefinitions() = db.Values
 
-        member this.findById id =
+        member this.FindById id =
             match db.ContainsKey id with
             | true -> Some db[id]
             | _ -> None
 
-        member this.getByCategory category =
-            db.Values |> Seq.filter (fun def -> def.category = category)
+        member this.GetByCategory category =
+            db.Values |> Seq.filter (fun def -> def.Category = category)
