@@ -3,6 +3,7 @@
 open Common.Constants
 open Common.Types
 open Godot
+open Common.Extensions
 
 [<Tool>]
 type DebugDrawNode() =
@@ -16,7 +17,6 @@ type DebugDrawNode() =
 
     override this._Draw() =
         this.DrawCircle(Vector2(0f, 0f), this.Radius, this.Color)
-
 
 type PauserFs() =
     inherit Godot.Node()
@@ -42,23 +42,4 @@ type PauserFs() =
 
     override this._Process(delta) = this.PauseCheck()
 
-type RollingCameraFs() =
-    inherit KinematicBody2D()
 
-    member val CurrentMoveDirection = MoveDirection.Up with get, set
-
-    [<Export>]
-    member val IsEnabled = true with get, set
-
-    [<Export>]
-    member val CurrentVelocity = Vector2.Zero with get, set
-
-    member this.GetVelocityInMoveDirection() =
-        this.CurrentMoveDirection.GetVelocityInMoveDirection this.CurrentVelocity this.Speed
-
-    [<Export>]
-    member val Speed = 20f with get, set
-
-    override this._PhysicsProcess(delta) =
-        if this.IsEnabled then
-            this.GetVelocityInMoveDirection() |> this.MoveAndSlide |> ignore

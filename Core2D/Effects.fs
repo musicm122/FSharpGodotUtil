@@ -2,11 +2,11 @@
 
 open Godot
 
-type BloodSpatter() =
+type BloodSpatterFS() =
     inherit CPUParticles2D()
-
+    
     [<Export>]
-    member val TargetNodePath = null with get, set
+    member val TargetGlobalPosition: Vector2 = Vector2.Zero with get, set
 
     [<Export>]
     member val TimerNodePath = new NodePath("Timer") with get, set
@@ -20,7 +20,8 @@ type BloodSpatter() =
     member this.OnTimeout() = this.QueueFree()
 
     member this.updateDirection() =
-        let targetPos = this.getGlobalPositionOfNode2d this.TargetNodePath
+        //let targetPos = this.getGlobalPositionOfNode2d this.TargetNodePath
+        let targetPos = this.TargetGlobalPosition
 
         if targetPos.x > this.GlobalPosition.x then
             this.Direction <- Vector2(-1f, this.Direction.y)

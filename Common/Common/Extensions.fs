@@ -1,25 +1,33 @@
 ﻿namespace Common
 
 open Common.Types
+open Common.Uti
 open Godot
+open System.ComponentModel
+open System
+open System.Reflection
+open Microsoft.FSharp.Reflection
+
 
 [<AutoOpen>]
-module Extensions =
-
+module Extensions =        
+    
     type Godot.Object with
 
         member this.TryConnectSignal(signalConnection: SignalConnection) =
-            //this.Connect("body_entered", this, nameof this.OnExaminableBodyEntered)
 
             let result =
-                this.Connect(signalConnection.signal, this, signalConnection.methodName)
+                signalConnection.Source.Connect(
+                    signalConnection.Signal,
+                    signalConnection.Target,
+                    signalConnection.MethodName)
 
             match result with
             | Error.Ok -> result
             | err ->
-                let msg = signalConnection.getSigFailMessage err
+                let msg = signalConnection.GetSigFailMessage err
 
-                let ex = GodotSignalConnectionFailure(signalConnection, err)
+                let ex = GodotSignalConnectionFailureException(signalConnection, err)
 
                 GD.PrintErr(msg, ex)
                 GD.PrintStack()
@@ -27,176 +35,224 @@ module Extensions =
 
         member this.TryDisconnectSignal(signalConnection: SignalConnection) =
             try
-                if this.HasSignal(signalConnection.signal) then
-                    this.Disconnect(signalConnection.signal, signalConnection.target, signalConnection.methodName)
+                if this.HasSignal(signalConnection.Signal) then
+                    this.Disconnect(signalConnection.Signal, signalConnection.Target, signalConnection.MethodName)
                 else
                     raise (
-                        GodotSignalDisconnectionFailure(signalConnection, SignalDisconnectionProblem.DoesNotHaveSignal)
+                        GodotSignalDisconnectionFailureException(signalConnection, SignalDisconnectionProblem.DoesNotHaveSignal)
                     )
-            with
-            | ex ->
-                raise (GodotSignalDisconnectionFailure(signalConnection, SignalDisconnectionProblem.OtherException ex))
+            with ex ->
+                raise (GodotSignalDisconnectionFailureException(signalConnection, SignalDisconnectionProblem.OtherException ex))
 
     type Area with
 
         member this.ConnectAreaEntered target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaEntered
+              Args = None }
             |> this.TryConnectSignal
 
         member this.ConnectAreaExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaExited
+              Args = None }
             |> this.TryConnectSignal
 
         member this.ConnectAreaShapeEntered target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaShapeEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaShapeEntered
+              Args = None }
             |> this.TryConnectSignal
 
         member this.ConnectAreaShapeExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaShapeExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaShapeExited
+              Args = None }
             |> this.TryConnectSignal
 
         member this.ConnectBodyEntered target methodName =
             //this.Connect("body_entered", this, nameof this.OnExaminableBodyEntered)
-
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyEntered
+              Args = None }
             |> this.TryConnectSignal
 
         member this.ConnectBodyExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyExited
+              Args = None }
             |> this.TryConnectSignal
 
         member this.ConnectBodyShapeEntered target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyShapeEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyShapeEntered
+              Args = None }
             |> this.TryConnectSignal
 
         member this.ConnectBodyShapeExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyShapeExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyShapeExited
+              Args = None }
             |> this.TryConnectSignal
 
         member this.DisconnectAreaEntered target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaEntered
+              Args = None }
             |> this.TryDisconnectSignal
 
         member this.DisconnectAreaExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaExited
+              Args = None }
             |> this.TryDisconnectSignal
 
         member this.DisconnectAreaShapeEntered target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaShapeEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaShapeEntered
+              Args = None }
             |> this.TryDisconnectSignal
 
         member this.DisconnectAreaShapeExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.AreaShapeExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.AreaShapeExited
+              Args = None }
             |> this.TryDisconnectSignal
 
         member this.DisconnectBodyEntered target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyEntered
+              Args = None }
             |> this.TryDisconnectSignal
 
         member this.DisconnectBodyExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyExited
+              Args = None }
             |> this.TryDisconnectSignal
 
         member this.DisconnectBodyShapeEntered target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyShapeEntered
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyShapeEntered
+              Args = None }
             |> this.TryDisconnectSignal
 
         member this.DisconnectBodyShapeExited target methodName =
-            { methodName = methodName
-              target = target
-              SignalConnection.signal = Godot.Signals.Area.BodyShapeExited
-              args = None }
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area.BodyShapeExited
+              Args = None }
             |> this.TryDisconnectSignal
 
+    type Button with
+
+        member this.ConnectButtonPressed source target methodName =
+            { MethodName = methodName
+              Source = source
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Button.Pressed
+              Args = None }
+            |> this.TryConnectSignal
+        
+        member this.ConnectButtonDown source target methodName =
+            { MethodName = methodName
+              Source = source
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Button.ButtonDown
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectButtonUp source target methodName =
+            { MethodName = methodName
+              Source = source
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Button.ButtonUp
+              Args = None }
+            |> this.TryConnectSignal                        
+            
+        member this.ConnectButtonToggle source target methodName =
+            { MethodName = methodName
+              Source = source
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Button.Toggled
+              Args = None }
+            |> this.TryConnectSignal                
+    
+    
     type InputEventMouseButton with
 
-        member this.isMouseButtonPressed(btnListItem: ButtonList) =
+        member this.IsMouseButtonPressed(btnListItem: ButtonList) =
             this.ButtonIndex = int btnListItem && this.Pressed
 
-        member this.isMouseButtonDoubleClicked(btnListItem: ButtonList) =
+        member this.IsMouseButtonDoubleClicked(btnListItem: ButtonList) =
             this.ButtonIndex = int btnListItem && this.Doubleclick
 
-        member this.isMouseButtonReleased(btnListItem: ButtonList) =
-            this.ButtonIndex = int btnListItem && this.Pressed = false
+        member this.IsMouseButtonReleased(btnListItem: ButtonList) =
+            this.ButtonIndex = int btnListItem && not this.Pressed
 
-        member this.isLeftButtonPressed() =
-            this.isMouseButtonPressed ButtonList.Left
+        member this.IsLeftButtonPressed() =
+            this.IsMouseButtonPressed ButtonList.Left
 
-        member this.isLeftButtonDoubleClicked() =
-            this.isMouseButtonDoubleClicked ButtonList.Left
+        member this.IsLeftButtonDoubleClicked() =
+            this.IsMouseButtonDoubleClicked ButtonList.Left
 
-        member this.isLeftButtonReleased() =
-            this.isMouseButtonReleased ButtonList.Left
+        member this.IsLeftButtonReleased() =
+            this.IsMouseButtonReleased ButtonList.Left
 
-        member this.isRightButtonPressed() =
-            this.isMouseButtonPressed ButtonList.Right
+        member this.IsRightButtonPressed() =
+            this.IsMouseButtonPressed ButtonList.Right
 
-        member this.isRightButtonReleased() =
-            this.isMouseButtonReleased ButtonList.Right
-
+        member this.IsRightButtonReleased() =
+            this.IsMouseButtonReleased ButtonList.Right
 
     type Godot.Collections.Array with
 
-        member this.toList<'a>() =
+        member this.ToList<'A>() =
             [ for item in this do
-                  item :?> 'a ]
+                  item :?> 'A ]
 
-        member this.toSeq<'a>() =
+        member this.ToSeq<'A>() =
             seq {
                 for i in 0 .. this.Count do
-                    yield (this.Item(i) :?> 'a)
+                    yield (this.Item(i) :?> 'A)
             }
 
-        member this.toArray<'a>() =
-            let arr = Array.zeroCreate<'a> this.Count
+        member this.ToArray<'A>() =
+            let arr = Array.zeroCreate<'A> this.Count
 
             for i = 0 to this.Count do
-                arr[i] <- (this.Item(i) :?> 'a)
+                arr[i] <- (this.Item(i) :?> 'A)
 
             arr
 
@@ -227,28 +283,27 @@ module Extensions =
 
     type SceneTree with
 
-        member this.getGlobalPositionOfNode2d nodeName =
-            (this.CurrentScene.FindNode(nodeName) :?> Node2D)
-                .GlobalPosition
+        member this.GetGlobalPositionOfNode2d nodeName =
+            (this.CurrentScene.FindNode(nodeName) :?> Node2D).GlobalPosition
 
-        member this.getNodesByType<'a>() =
+        member this.GetNodesByType<'A>() =
             this
                 .CurrentScene
                 .GetChildren()
                 .Filter(fun node ->
                     match node with
-                    | :? 'a -> true
+                    | :? 'A -> true
                     | _ -> false)
 
     type Node with
 
         member this.IsPaused() = this.GetTree().Paused
 
-        member this.Pause() = this.GetTree().Paused = true
-        member this.Unpause() = this.GetTree().Paused = false
+        member this.Pause() = this.GetTree().Paused 
+        member this.Unpause() =  this.GetTree().Paused |> not 
 
         member this.TogglePause() =
-            this.GetTree().Paused = (this.GetTree().Paused) |> not
+            this.GetTree().Paused = this.GetTree().Paused <> this.GetTree().Paused
 
         member this.ReloadScene() = this.GetTree().ReloadCurrentScene()
 
@@ -258,12 +313,17 @@ module Extensions =
             task { return this.ToSignal(this.GetTree().CreateTimer(seconds), Godot.Signals.Timer.Timeout) }
 
         member this.GetOwnerAsSpatial() = this.Owner :?> Spatial
-        member inline this.GetOwnerAs<'a when 'a :> Node>() = this.Owner :?> 'a
+        member inline this.GetOwnerAs<'A when 'A :> Node>() = this.Owner :?> 'A
 
-        member this.GetNode<'a when 'a :> Node and 'a: not struct>(path: string) =
-            lazy (this.GetNode<'a>(new NodePath(path)))
+        member this.GetNode<'A when 'A :> Node and 'A: not struct>(path: string) =
+            lazy (this.GetNode<'A>(new NodePath(path)))
 
-        member this.getChildrenOfSeq() = this.GetChildren() |> Seq.cast<Node>
+        member this.GetChildrenOfSeq() = this.GetChildren() |> Seq.cast<Node>
+
+        member this.GetNodeOption<'A when 'A :> Node and 'A: not struct and 'A: equality and 'A: null> path =
+            match this.GetNode<'A>(new NodePath(path)) with
+            | node when isNull node -> None
+            | node -> Some node
 
     type Node2D with
 
@@ -272,7 +332,7 @@ module Extensions =
         member this.FireAtAngle (dir: Vector2) (speed: float32) (delta: float32) =
             let angle = this.Rotation - Mathf.Pi / 2f
 
-            let dir = new Vector2(cos angle, - sin(angle))
+            let dir = Vector2(cos angle, - sin(angle))
 
             this.FireInDirection dir speed delta
 
@@ -288,15 +348,40 @@ module Extensions =
         member this.PrintGlobalPosition(msg) =
             GD.Print(msg + " Postion x, y :", this.GlobalPosition.x.ToString(), this.GlobalPosition.y.ToString())
 
-        member this.GetNodeLazy<'a when 'a :> Node and 'a: not struct>(path: string) =
-            lazy (this.GetNode<'a>(new NodePath(path)))
+        member this.GetNodeLazy<'A when 'A :> Node and 'A: not struct>(path: string) =
+            lazy (this.GetNode<'A>(new NodePath(path)))
+
+        member this.DrawCircleArc center radius angleFrom angleTo color =
+            let pts = 32
+            let range = [| 0 .. (pts + 1) |]
+
+            let pointsArc =
+                range
+                |> Array.map (fun (i: int) ->
+                    let anglePoint =
+                        (float32) angleFrom
+                        + (float32) i * ((float32) angleTo - (float32) angleFrom) / (float32) pts
+                        - 90f
+                        |> Mathf.Deg2Rad
+
+                    center + Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radius)
+
+            range
+            |> Array.iter (fun i -> this.DrawLine(pointsArc[i], pointsArc[i + 1], color))
+
+        member this.GetChildrenOfType<'A when 'A :> Node and 'A: not struct>() =
+            this.GetChildrenOfSeq ()
+            |> Seq.filter (fun testType ->
+                let t1 = (testType.GetType().AssemblyQualifiedName)
+                let t2 = (typeof<'A>).AssemblyQualifiedName
+                t1 = t2)
 
     type Vector2 with
 
         member this.WithX(newX) = Vector2(newX, this.y)
 
         member this.AddToX(newX) = Vector2(this.x + newX, this.y)
-        member this.SubToX(newX) = Vector2(this.x - newX, this.y)
+        member this.SubFromX(newX) = Vector2(this.x - newX, this.y)
 
         member this.WithY(newY) = Vector2(this.x, newY)
 
@@ -314,7 +399,7 @@ module Extensions =
             Vector2(x, y)
 
 
-        member this.rotateCounterClockwiseByAngle radianAngle =
+        member this.RotateCounterClockwiseByAngle radianAngle =
             //x' = x cos θ − y sin θ
             //y' = x sin θ + y cos θ
             //newX = oldX * cos(angle) - oldY * sin(angle)
@@ -323,14 +408,12 @@ module Extensions =
             let newY = (this.x * Mathf.Sin(radianAngle)) + (this.y * Mathf.Cos(radianAngle))
             Vector2(newX, newY)
 
-
-
     type Vector3 with
 
         member this.WithX(newX) = Vector3(newX, this.y, this.z)
 
         member this.AddToX(newX) = Vector3(this.x + newX, this.y, this.z)
-        member this.SubToX(newX) = Vector3(this.x - newX, this.y, this.z)
+        member this.SubFromX(newX) = Vector3(this.x - newX, this.y, this.z)
 
         member this.WithY(newY) = Vector3(this.x, newY, this.z)
 
@@ -357,7 +440,7 @@ module Extensions =
     type KinematicCollision with
 
         member this.ColliderIsInGroup(groupName: string) : bool =
-            if this <> null then
+            if not(isNull this) then
                 let body = this.Collider :?> PhysicsBody
                 body.IsInGroup groupName
             else
@@ -366,7 +449,7 @@ module Extensions =
     type KinematicBody with
 
         member this.GetAllColliders() : Option<seq<KinematicCollision>> =
-            if this = null then
+            if isNull this then
                 Option.None
             else
                 let slideCount = this.GetSlideCount()

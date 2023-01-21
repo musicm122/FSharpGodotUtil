@@ -1,18 +1,14 @@
-﻿namespace  Common.Services
+﻿namespace Common.Services
 
 
 
-open Common.Interfaces
 open Common.Services
 
 module Global =
-    let private _dialogManager =
-        Lazy.Create(fun () -> new DialogManager())
+    let private _dialogManager = Lazy.Create(fun () -> new DialogManager())
 
-    let private _logger =
-        Lazy.Create(fun () -> Log())
+    let private _logger = Lazy.Create(fun () -> Log())
 
     let DialogManager () : DialogManager = _dialogManager.Value
 
     let Log () = _logger.Value :> Common.Reader.ILogger
-

@@ -44,7 +44,7 @@ module PhysicsUtil =
             else
                 deceleration
 
-        if isOnFloor = false then acc <- acc * airControl
+        if not isOnFloor then acc <- acc * airControl
 
         tempV <- tempV.LinearInterpolate(target, acc * delta)
 

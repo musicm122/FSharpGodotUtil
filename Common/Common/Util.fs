@@ -1,8 +1,31 @@
 ﻿namespace Common.Uti
 
+open System
 open Common.Constants
 open Godot
 open Microsoft.FSharp.Reflection
+open System.ComponentModel
+open System
+open System.Reflection
+
+module EnumUtil =
+    let asEnum<'T when 'T: enum<int> and 'T: struct and 'T :> ValueType and 'T: (new: unit -> 'T)> text =
+        match Enum.TryParse<'T>(text) with
+        | true, value -> Some value
+        | _ -> None
+
+    let getDescription<'T when 'T: enum<int> and 'T: struct and 'T :> ValueType and 'T: (new: unit -> 'T)> enumVal =
+        let field = enumVal.GetType().GetField(enumVal.ToString())
+
+        match field with
+        | null -> String.Empty
+        | _ ->
+            let attrib =
+                field.GetCustomAttribute(typeof<DescriptionAttribute>) :?> DescriptionAttribute
+
+            attrib.Description
+
+
 
 module InputUtil =
 
@@ -27,6 +50,17 @@ module InputUtil =
     let IsAnyKeyPressed () =
         InputActions.AllInputs |> Array.exists Input.IsActionPressed
 
+    let GetTopDownWithDiagMovementInputStrengthVector () =
+        let x =
+            Input.GetActionStrength(InputActions.Right)
+            - Input.GetActionStrength(InputActions.Left)
+
+        let y =
+            Input.GetActionStrength(InputActions.Down)
+            - Input.GetActionStrength(InputActions.Up)
+
+        Vector2(x, y).Normalized()
+
 
 module MouseUtil =
     let isMouseButtonPressed (btnEvent: InputEventMouseButton) (btnListItem: ButtonList) =
@@ -42,12 +76,10 @@ module ActivePatterns =
     let (|EmptySeq|_|) a =
         if Seq.isEmpty a then Some() else Option.None
 
-
 module DIUtil =
     let UnionCasesOf<'A> () =
         FSharpType.GetUnionCases typeof<'A>
         |> Array.map (fun case -> FSharpValue.MakeUnion(case, [||]) :?> 'A)
-
 
 module ProjectSetting =
     let getGravity =
@@ -55,14 +87,14 @@ module ProjectSetting =
 
 module NodeUtil =
 
-    let inline getNodeResultFromPath<'a when 'a: not struct> (node: Node) (path: NodePath) =
+    let inline getNodeResultFromPath<'A when 'A: not struct> (node: Node) (path: NodePath) =
         try
-            match node.GetNode<'a>(path) with
+            match node.GetNode<'A>(path) with
             | result -> Result.Ok result
-        with
-        | e -> Result.Error e.Message
+        with e ->
+            Result.Error e.Message
 
-    let inline getNodeFromPath<'a when 'a: not struct> (node: Node) (path: NodePath) = node.GetNode<'a>(path)
+    let inline getNodeFromPath<'A when 'A: not struct> (node: Node) (path: NodePath) = node.GetNode<'A>(path)
 
 module MathUtils =
 

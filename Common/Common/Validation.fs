@@ -5,7 +5,7 @@ open Common.Constants
 open Common.Types
 
 type SignalValidator() =
-    member this.validSignalName signalName : SignalProblem =
+    member this.ValidSignalName signalName : SignalProblem =
         match String.IsNullOrWhiteSpace(signalName) with
         | true -> SignalProblem.MissingField MissingSignalField.SignalName
         | false ->
@@ -13,25 +13,25 @@ type SignalValidator() =
             | true -> OkSignal
             | _ -> InvalidSignal signalName
 
-    member this.validSource source =
+    member this.ValidSource source =
         match source with
         | null -> SignalProblem.MissingField MissingSignalField.Source
         | _ -> OkSignal
 
-    member this.validTarget target =
+    member this.ValidTarget target =
         match target with
         | null -> SignalProblem.MissingField MissingSignalField.Target
         | _ -> OkSignal
 
-    member this.validMethodName methodName =
+    member this.ValidMethodName methodName =
         match String.IsNullOrWhiteSpace(methodName) with
         | true -> SignalProblem.MissingField MissingSignalField.MethodName
         | _ -> OkSignal
 
-    member this.validate(signalConnection: SignalConnection) =
-        [ this.validTarget signalConnection.target
-          this.validSignalName signalConnection.signal
-          this.validMethodName signalConnection.methodName ]
+    member this.Validate(signalConnection: SignalConnection) =
+        [ this.ValidTarget signalConnection.Target
+          this.ValidSignalName signalConnection.Signal
+          this.ValidMethodName signalConnection.MethodName ]
         |> List.filter (fun validations ->
             match validations with
             | OkSignal -> false

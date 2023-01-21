@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net472</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latestmajor</LangVersion>
     </PropertyGroup>
 
@@ -20,5 +21,9 @@
     <ItemGroup>
         <ProjectReference Include="..\Common\Common\Common.fsproj" />
     </ItemGroup>
+    <Target Name="FSharpLint" AfterTargets="BeforeBuild">
+        <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint Core3D.fsproj" IgnoreExitCode="true"/>
+    </Target>
+
 
 </Project>

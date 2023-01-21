@@ -4,8 +4,6 @@ open System.Collections.Generic
 open Common.Types
 open Godot
 
-exception GodotSignalException of Godot.Error * string
-
 type AudioManager() =
     inherit Node()
 
@@ -26,8 +24,13 @@ type AudioManager() =
         AudioManager.freeChannels.Enqueue channel
 
     static member PlaySound streamName : unit =
-        if AudioManager.queue.Contains(streamName) <> true then
-            AudioManager.queue.Enqueue streamName
+        try 
+            if AudioManager.queue.Contains(streamName) <> true then
+                AudioManager.queue.Enqueue streamName
+        with
+        |  ex ->
+            GD.PrintErr([ex,"AudioManager Exception thrown while playing sound:"+ streamName])
+            failwith ex.Message
 
     member this.initializeChannel busName =
         let channel = new AudioStreamPlayer()
@@ -66,11 +69,16 @@ type AudioManager() =
     override this._Ready() = this.initializeChannels ()
 
     override this._Process delta =
-        if this.hasWork then
-            let player = AudioManager.freeChannels.Dequeue()
+        try
+            if this.hasWork then
+                let player = AudioManager.freeChannels.Dequeue()
 
-            player.Stream <- Godot.GD.Load<AudioStream>(AudioManager.queue.Dequeue())
-            player.Play()
+                player.Stream <- GD.Load<AudioStream>(AudioManager.queue.Dequeue())
+                player.Play()
+        with
+        |  ex ->
+            GD.PrintErr([ex,"AudioManager Exception thrown"])
+            failwith ex.Message
 
 type IPlayAudio =
     abstract member PlaySound: string -> unit

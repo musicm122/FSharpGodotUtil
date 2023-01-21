@@ -3,8 +3,8 @@
 open Godot
 open System
 
-type GC_Array = Godot.Collections.Array
-type GC_Dictionary = Godot.Collections.Dictionary
+type GCArray = Godot.Collections.Array
+type GCDictionary = Godot.Collections.Dictionary
 
 
 type DialogicSignals =
@@ -14,6 +14,7 @@ type DialogicSignals =
     | Timeline_Start
     | Timeline_End
     | Auto_Advance_Toggled
+
     member this.AsString() =
         match this with
         | Dialogic_Signal -> "dialogic_signal"
@@ -89,7 +90,7 @@ type DialogicSharp() =
         DialogicSharp._dialogic.Call("save", slot_name)
 
     static member GetSlotNames() =
-        (DialogicSharp._dialogic.Call("get_slot_names")) :?> GC_Array
+        (DialogicSharp._dialogic.Call("get_slot_names")) :?> GCArray
 
     static member EraseSlot(slot_name: String) =
         DialogicSharp._dialogic.Call("erase_slot", slot_name)
@@ -104,9 +105,9 @@ type DialogicSharp() =
         (DialogicSharp._dialogic.Call("get_current_slot")) :?> String
 
     static member Export() =
-        (DialogicSharp._dialogic.Call("export")) :?> GC_Dictionary
+        (DialogicSharp._dialogic.Call("export")) :?> GCDictionary
 
-    static member Import(data: GC_Dictionary) =
+    static member Import(data: GCDictionary) =
         DialogicSharp._dialogic.Call("import", data)
 
     static member GetVariable(name: String) =
@@ -117,18 +118,14 @@ type DialogicSharp() =
 
     static member CurrentTimeline
         with get () = (DialogicSharp._dialogic.Call("get_current_timeline")) :?> String
-        and set (value: String) =
-            DialogicSharp._dialogic.Call("set_current_timeline", value)
-            |> ignore
+        and set (value: String) = DialogicSharp._dialogic.Call("set_current_timeline", value) |> ignore
 
     static member Definitions =
-        (DialogicSharp._dialogic.Call("get_definitions")) :?> GC_Dictionary
+        (DialogicSharp._dialogic.Call("get_definitions")) :?> GCDictionary
 
     static member DefaultDefinitions =
-        (DialogicSharp._dialogic.Call("get_default_definitions")) :?> GC_Dictionary
+        (DialogicSharp._dialogic.Call("get_default_definitions")) :?> GCDictionary
 
     static member Autosave
         with get () = (DialogicSharp._dialogic.Call("get_autosave")) :?> System.Boolean
-        and set (value: Boolean) =
-            DialogicSharp._dialogic.Call("set_autosave", value)
-            |> ignore
+        and set (value: Boolean) = DialogicSharp._dialogic.Call("set_autosave", value) |> ignore

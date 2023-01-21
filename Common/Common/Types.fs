@@ -1,38 +1,7 @@
 ﻿namespace Common.Types
 
 open System
-open Common.Interfaces
 open Godot
-
-
-
-module CustomEvents =
-    let PlayerInteracting = Event<IExaminable>()
-
-    let PlayerInteractingComplete =
-        Event<unit>()
-
-    let PlayerInteractingEvent = Event<unit>()
-
-    let PlayerInteractingUnavailable =
-        Event<unit>()
-
-    let PlayerInteractingAvailable =
-        Event<unit>()
-module PauseEvents =
-    let Pause = Event<unit>()
-    let Unpause = Event<unit>()
-    
-module DialogEvents =
-    let DialogInteractionStart = Event<unit>()
-
-    let DialogInteractionComplete =
-        Event<unit>()
-
-    let PlayerInteractionAvailabilityChange =
-        Event<bool>()
-        
-
 
 type MoveDirection =
     | Left
@@ -44,7 +13,7 @@ type MoveDirection =
     | UpLeft
     | DownLeft
 
-    member this.GetVelocityInMoveDirection (velocity: Vector2) (speed: float32) =
+    member this.GetVelocityInMoveDirection (velocity: Vector2) (speed: float32) : Vector2 =
         let halfSpeed = speed * 0.5f
 
         match this with
@@ -77,26 +46,32 @@ type SignalDisconnectionProblem =
     | OkDisconnection
 
 type SignalConnection =
-    { methodName: string
-      target: Godot.Object
-      signal: string
-      args: Godot.Collections.Array option }
+    { MethodName: string
+      Source: Godot.Object
+      Target: Object
+      Signal: string
+      Args: Godot.Collections.Array option }
 
-    static member Default(signal, target, methodName) =
-        { methodName = methodName
-          target = target
-          signal = signal
-          args = None }
+    static member Default signal target source methodName =
+        { MethodName = methodName
+          Source = source
+          Target = target
+          Signal = signal
+          Args = None }
 
-    member this.getSigFailMessage(error: Error) =
+    member this.GetSigFailMessage(error: Error) =
         $@"-------------------------------------
         ConnectBodyEntered with args failed with {error.ToString()}
         TryConnectSignal args
-        signal:{this.signal}
-        target: {this.target.ToString()}
-        methodName :{this.methodName}
+        signal:{this.Signal}
+        source:{this.Source}
+        target: {this.Target.ToString()}
+        methodName :{this.MethodName}
         -------------------------------------"
 
-exception GodotSignalConnectionFailure of SignalConnection * Error
-exception GodotSignalDisconnectionFailure of SignalConnection * SignalDisconnectionProblem
+exception GodotSignalConnectionFailureException of (SignalConnection * Error)
+exception GodotSignalConnectionFailureDetailedException of (SignalConnection * Error * string)
+
+exception GodotSignalDisconnectionFailureException of SignalConnection * SignalDisconnectionProblem
 exception GodotAudioSignalException of Godot.Error * string
+exception GodotSignalException of Godot.Error * string

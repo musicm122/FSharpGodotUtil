@@ -59,7 +59,7 @@ type MovementControllerFS() =
         GD.Print("Current Gravity = " + this.gravity.ToString())
         ()
 
-    member this.getCurrentSnap(delta: float32) =
+    member this.GetCurrentSnap(delta: float32) =
         - this.GetFloorNormal() - this.GetFloorVelocity() * delta
 
     override this._PhysicsProcess delta =
@@ -86,7 +86,7 @@ type MovementControllerFS() =
 
         match this.IsOnFloor() with
         | true ->
-            this.snap <- this.getCurrentSnap delta
+            this.snap <- this.GetCurrentSnap delta
             // Workaround for sliding down after jump on slope
             this.velocity <- slopeVelocityCheck this.velocity
 
@@ -198,7 +198,7 @@ type SprintFS() =
         this.normalFov <- this.camera.Fov
         this.normalSpeed <- this.controller.playerConfig.speed
 
-    member this.canSprint(controller: MovementControllerFS) =
+    member this.CanSprint(controller: MovementControllerFS) =
         controller.IsOnFloor()
         && InputUtil.IsSprintPressed()
         && controller.inputAxis.x >= 0.0f
@@ -211,7 +211,7 @@ type SprintFS() =
 
         let multipliedFov = (this.normalFov * this.fovMultiplier)
 
-        match this.canSprint this.controller with
+        match this.CanSprint this.controller with
         | true ->
             this.controller.playerConfig.speed <- this.sprintSpeed
             this.camera.Fov <- calcFOV multipliedFov

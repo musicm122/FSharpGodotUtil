@@ -8,7 +8,6 @@ module CommonColors =
     let IdleColor = Color(140f, 140f, 140f)
     let AggroColor = Color(255f, 0f, 0f)
 
-
 module InputActions =
 
     [<Literal>]
@@ -22,6 +21,19 @@ module InputActions =
 
     [<Literal>]
     let MoveRight = "move_right"
+
+    [<Literal>]
+    let Left = "left"
+
+    [<Literal>]
+    let Right = "right"
+
+    [<Literal>]
+    let Up = "up"
+
+    [<Literal>]
+    let Down = "down"
+
 
     [<Literal>]
     let Jump = "jump"

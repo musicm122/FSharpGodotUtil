@@ -4,15 +4,13 @@
 //https://github.com/GDQuest/godot-design-patterns/blob/d7ff00899a55965bcf74c0954355efc39432852a/godot-csharp/StateMachine/State.cs#L4
 //https://www.gdquest.com/tutorial/godot/design-patterns/finite-state-machine/#:~:text=Split%20an%20object%27s%20finite%20number,often%20represented%20as%20a%20graph.
 open System.Collections.Generic
-open System.Threading.Tasks
 open Godot
-open Common.Extensions
 
 [<Signal>]
 type Transitioned = delegate of string -> unit
 
-type StateMessage<'a> =
-    | Args of Dictionary<string, 'a>
+type StateMessage<'A> =
+    | Args of Dictionary<string, 'A>
     | NoOp
 // delegate void Transitioned(string stateName);
 // NodePath InitialState;
@@ -27,7 +25,7 @@ type StateNode() =
     inherit Node()
     member val Update: (float32 -> unit) option = None with get, set
     member val PhysicsUpdate: ((float32 -> unit) option) = None with get, set
-    member val Enter: ((StateMessage<'a> -> unit) option) = None with get, set
+    member val Enter: ((StateMessage<'A> -> unit) option) = None with get, set
     member val Exit: ((unit -> unit) option) = None with get, set
     member val HandleInputs: ((InputEvent -> unit) option) = None with get, set
 
@@ -47,7 +45,7 @@ type StateMachineNode() =
         | Some exit -> exit ()
         | _ -> ()
 
-    let enterState (state: StateNode) (msg: StateMessage<'a>) : unit =
+    let enterState (state: StateNode) (msg: StateMessage<'A>) : unit =
         match state.Enter with
         | Some enter -> enter msg
         | _ -> ()
@@ -97,7 +95,7 @@ type StateMachineNode() =
             | Some update -> update delta
             | _ -> ()
         | _ -> ()
-    
+
     override this._PhysicsProcess delta =
         match this.CurrentState with
         | Some current ->
@@ -105,8 +103,8 @@ type StateMachineNode() =
             | Some update -> update delta
             | _ -> ()
         | _ -> ()
-    
-    member this.TransitionTo (stateName: string) (msg: StateMessage<'a>) =
+
+    member this.TransitionTo (stateName: string) (msg: StateMessage<'A>) =
         match this.States.ContainsKey stateName with
         | true ->
             let newState = Some(this.States.Item stateName)

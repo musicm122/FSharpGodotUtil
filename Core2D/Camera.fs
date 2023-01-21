@@ -1,8 +1,33 @@
 ﻿namespace Common.Camera
 
 open Common.Interfaces
+open Common.Types
 open Common.Uti
 open Godot
+
+
+type RollingCameraFs() =
+    inherit KinematicBody2D()
+
+    member val CurrentMoveDirection = MoveDirection.Up with get, set
+
+    [<Export>]
+    member val IsEnabled = true with get, set
+
+    [<Export>]
+    member val CurrentVelocity = Vector2.Zero with get, set
+
+    member this.GetVelocityInMoveDirection() =
+        this.CurrentMoveDirection.GetVelocityInMoveDirection this.CurrentVelocity this.Speed
+
+    [<Export>]
+    member val Speed = 20f with get, set
+
+    override this._PhysicsProcess _ =
+        if this.IsEnabled then
+            this.GetVelocityInMoveDirection() |> this.MoveAndSlide |> ignore
+
+
 
 type PlayerCameraFs() =
     inherit Camera2D()
@@ -36,7 +61,7 @@ type PlayerCameraFs() =
             this.last_shook_timer <- this.last_shook_timer - period
 
             let newOffset =
-                this.CurrentShake.newPointXY (this.CurrentShake.x, this.CurrentShake.y, delta)
+                this.CurrentShake.NewPointXY (this.CurrentShake.X, this.CurrentShake.Y, delta)
 
             this.Offset <- this.Offset - this.last_offset + newOffset
             this.last_offset <- newOffset

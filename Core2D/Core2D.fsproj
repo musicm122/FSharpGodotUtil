@@ -2,15 +2,17 @@
 
     <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latestmajor</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Library.fs" />
+        <Compile Include="Navigation.fs" />
+        <Compile Include="CollisionBoxes.fs" />
         <Compile Include="Components.fs" />
         <Compile Include="Effects.fs" />
         <Compile Include="Camera.fs" />
+        <Compile Include="Extensions.fs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,5 +24,9 @@
     <ItemGroup>
         <ProjectReference Include="..\Common\Common\Common.fsproj" />
     </ItemGroup>
+
+    <Target Name="FSharpLint" AfterTargets="BeforeBuild">
+        <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint Core2D.fsproj" IgnoreExitCode="true"/>
+    </Target>
 
 </Project>

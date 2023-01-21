@@ -26,10 +26,10 @@
 
     <ItemGroup>
         <Reference Include="GodotSharp">
-            <HintPath>..\Ref\GodotSharp.dll</HintPath>
+            <HintPath>..\..\Assemblies\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
         </Reference>
         <Reference Include="GodotSharpEditor">
-            <HintPath>..\Ref\GodotSharpEditor.dll</HintPath>
+            <HintPath>..\..\Assemblies\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
         </Reference>
     </ItemGroup>
 

@@ -3,12 +3,6 @@
 open Common.Uti
 open Godot
 
-type DialogArg =
-    { timeline: string
-      methodName: string
-      shouldRemove: bool
-      onComplete: (unit -> unit) option }
-
 type IPauseable =
     abstract Pause: unit -> unit
     abstract Unpause: unit -> unit
@@ -26,13 +20,6 @@ type IExaminer =
 
 
 [<Interface>]
-type IDialogManager =
-    abstract member DialogListener: System.Object -> unit
-    abstract member DialogComplete: unit -> unit
-    abstract member StartDialog: Node -> DialogArg -> unit
-    abstract member PauseForCompletion: float32 -> unit
-
-[<Interface>]
 type IExaminable =
     abstract member OnExaminableBodyEntered: Node -> unit
     abstract member OnExaminableBodyExited: Node -> unit
@@ -40,8 +27,8 @@ type IExaminable =
 type ScreenShakeInstance =
     { Duration: float32
       mutable RemainingDuration: float32
-      mutable x: float32
-      mutable y: float32
+      mutable X: float32
+      mutable Y: float32
       Frequency: float32
       Amplitude: float32 }
 
@@ -51,17 +38,17 @@ type ScreenShakeInstance =
 
     member this.PeriodInMs() = 1.0f / this.Frequency
 
-    member private this.newPoint(previous, delta) =
+    member private this.NewPoint(previous, delta) =
         let newX = MathUtils.getRandomPosNegOne ()
         float32 (this.Intensity()) * (previous + (delta * (newX - previous)))
 
-    member this.newPointXY(oldX, oldY, delta) =
-        new Vector2(this.newPoint (oldX, delta), this.newPoint (oldY, delta))
+    member this.NewPointXY(oldX, oldY, delta) =
+        Vector2(this.NewPoint (oldX, delta), this.NewPoint (oldY, delta))
 
     member this.UpdatePos(newX, newY) =
-        this.x <- newX
-        this.y <- newY
-        new Vector2(newX, newY)
+        this.X <- newX
+        this.Y <- newY
+        Vector2(newX, newY)
 
     //member this.getShakeOffset(delta)=
     //if this.RemainingDuration = 0.0 then (false, Vector2.Zero)
@@ -78,7 +65,7 @@ type ScreenShakeInstance =
     static member Default() =
         { Duration = 0.0f
           RemainingDuration = 0.0f
-          x = 0f
-          y = 0f
+          X = 0f
+          Y = 0f
           Frequency = 0.0f
           Amplitude = 0.0f }
