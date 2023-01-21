@@ -14,10 +14,10 @@ module DialogEvents =
     let PlayerInteractionAvailabilityChange = Event<bool>()
 
 type DialogArg =
-    { timeline: string
-      methodName: string
-      shouldRemove: bool
-      onComplete: (unit -> unit) option }
+    { Timeline: string
+      MethodName: string
+      ShouldRemove: bool
+      OnComplete: (unit -> unit) option }
 
 [<Interface>]
 type IDialogManager =
@@ -73,12 +73,12 @@ type DialogManager() =
 
         member this.StartDialog (owner: Node) (dialogArg: DialogArg) =
             try
-                this.dialogCompleteCallback <- dialogArg.onComplete
+                this.dialogCompleteCallback <- dialogArg.OnComplete
 
                 GD.Print("DialogManager.StartDialog called with args " + dialogArg.ToString())
                 DialogEvents.DialogInteractionStart.Trigger()
 
-                let dialog = DialogicSharp.Start(dialogArg.timeline)
+                let dialog = DialogicSharp.Start(dialogArg.Timeline)
 
                 let result =
                     dialog.Connect(Timeline_End.AsString(), this, nameof this.DialogListener)

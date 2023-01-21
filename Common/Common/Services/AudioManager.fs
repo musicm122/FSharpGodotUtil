@@ -25,7 +25,7 @@ type AudioManager() =
 
     static member PlaySound streamName : unit =
         try 
-            if AudioManager.queue.Contains(streamName) <> true then
+            if not (AudioManager.queue.Contains(streamName)) then
                 AudioManager.queue.Enqueue streamName
         with
         |  ex ->

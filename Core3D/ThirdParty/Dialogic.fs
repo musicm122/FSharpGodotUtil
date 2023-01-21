@@ -84,10 +84,10 @@ type ExamineFS() =
   
     member this.StartDialog() =
         let args =
-            { DialogArg.timeline = this.Timeline
-              shouldRemove = this.ShouldRemove
-              methodName = nameof this.DialogListener
-              onComplete = Some this.OnInteractionComplete }
+            { Timeline = this.Timeline
+              ShouldRemove = this.ShouldRemove
+              MethodName = nameof this.DialogListener
+              OnComplete = Some this.OnInteractionComplete }
 
         let dialogManager =
             this.DialogManager :> IDialogManager
