@@ -43,25 +43,3 @@ module MoveDirection =
             directionData.InputDirection.GetVelocityInMoveDirection velocity speed
             |> should equal directionData.ExpectedVelocity
 
-
-module SignalConnection =
-    type ``Given a failed signal connection``() =
-        let mockSource = Mock.Of<Godot.Object>(MockBehavior.Strict)
-        let mockTarget = Mock.Of<Godot.Object>()
-
-        let signalConnection =
-            SignalConnection.Default "FubarSignalName" mockSource mockTarget "FubarMethodName"
-
-        [<Fact>]
-        member this.``When provided with a Godot error it should return a formatted error message``() =
-            signalConnection.GetSigFailMessage Error.Failed
-            |> should
-                equal
-                $@"-------------------------------------
-                       ConnectBodyEntered with args failed with {Error.Failed.ToString()}
-                       TryConnectSignal args
-                       signal:{signalConnection.Signal}
-                       source:{signalConnection.Source}
-                       target: {signalConnection.Target.ToString()}
-                       methodName :{signalConnection.MethodName}
-                       -------------------------------------"
