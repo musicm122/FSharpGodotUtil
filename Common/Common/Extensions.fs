@@ -10,8 +10,8 @@ open Microsoft.FSharp.Reflection
 
 
 [<AutoOpen>]
-module Extensions =        
-    
+module Extensions =
+
     type Godot.Object with
 
         member this.TryConnectSignal(signalConnection: SignalConnection) =
@@ -20,7 +20,8 @@ module Extensions =
                 signalConnection.Source.Connect(
                     signalConnection.Signal,
                     signalConnection.Target,
-                    signalConnection.MethodName)
+                    signalConnection.MethodName
+                )
 
             match result with
             | Error.Ok -> result
@@ -39,10 +40,18 @@ module Extensions =
                     this.Disconnect(signalConnection.Signal, signalConnection.Target, signalConnection.MethodName)
                 else
                     raise (
-                        GodotSignalDisconnectionFailureException(signalConnection, SignalDisconnectionProblem.DoesNotHaveSignal)
+                        GodotSignalDisconnectionFailureException(
+                            signalConnection,
+                            SignalDisconnectionProblem.DoesNotHaveSignal
+                        )
                     )
             with ex ->
-                raise (GodotSignalDisconnectionFailureException(signalConnection, SignalDisconnectionProblem.OtherException ex))
+                raise (
+                    GodotSignalDisconnectionFailureException(
+                        signalConnection,
+                        SignalDisconnectionProblem.OtherException ex
+                    )
+                )
 
     type Area with
 
@@ -175,6 +184,72 @@ module Extensions =
               Args = None }
             |> this.TryDisconnectSignal
 
+    type Area2D with
+    
+        member this.ConnectAreaEntered target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.AreaEntered
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectAreaExited target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.AreaExited
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectAreaShapeEntered target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.AreaShapeEntered
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectAreaShapeExited target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.AreaShapeExited
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectBodyEntered target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.BodyEntered
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectBodyExited target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.BodyExited
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectBodyShapeEntered target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.BodyShapeEntered
+              Args = None }
+            |> this.TryConnectSignal
+            
+        member this.ConnectBodyShapeExited target methodName = 
+            { MethodName = methodName
+              Source = this
+              Target = target
+              SignalConnection.Signal = Godot.Signals.Area2D.BodyShapeExited
+              Args = None }
+            |> this.TryConnectSignal
+            
     type Button with
 
         member this.ConnectButtonPressed source target methodName =
@@ -299,8 +374,8 @@ module Extensions =
 
         member this.IsPaused() = this.GetTree().Paused
 
-        member this.Pause() = this.GetTree().Paused 
-        member this.Unpause() =  this.GetTree().Paused |> not 
+        member this.Pause() = this.GetTree().Paused
+        member this.Unpause() = this.GetTree().Paused |> not
 
         member this.TogglePause() =
             this.GetTree().Paused = this.GetTree().Paused <> this.GetTree().Paused
@@ -325,11 +400,23 @@ module Extensions =
             | node when isNull node -> None
             | node -> Some node
 
+    type Area2D with
+
+        member this.HasLineOfSight(point: Vector2) =
+            let spaceState = this.GetWorld2d().DirectSpaceState
+
+            let result =
+                spaceState.IntersectRay(this.GlobalTransform.origin, point, null, this.CollisionMask)
+
+            match result with
+            | intersection when not(isNull intersection) && intersection.Count > 0 -> true
+            | _ -> false
+
     type Node2D with
 
         member this.FireInDirection dir speed delta = this.Translate(dir * speed * delta)
 
-        member this.FireAtAngle (dir: Vector2) (speed: float32) (delta: float32) =
+        member this.FireAtAngle (speed: float32) (delta: float32) =
             let angle = this.Rotation - Mathf.Pi / 2f
 
             let dir = Vector2(cos angle, - sin(angle))
@@ -370,7 +457,7 @@ module Extensions =
             |> Array.iter (fun i -> this.DrawLine(pointsArc[i], pointsArc[i + 1], color))
 
         member this.GetChildrenOfType<'A when 'A :> Node and 'A: not struct>() =
-            this.GetChildrenOfSeq ()
+            this.GetChildrenOfSeq()
             |> Seq.filter (fun testType ->
                 let t1 = (testType.GetType().AssemblyQualifiedName)
                 let t2 = (typeof<'A>).AssemblyQualifiedName
@@ -440,7 +527,7 @@ module Extensions =
     type KinematicCollision with
 
         member this.ColliderIsInGroup(groupName: string) : bool =
-            if not(isNull this) then
+            if not (isNull this) then
                 let body = this.Collider :?> PhysicsBody
                 body.IsInGroup groupName
             else
