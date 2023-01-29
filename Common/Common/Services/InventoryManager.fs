@@ -57,12 +57,7 @@ type InventoryEventArgs(item: ItemInstance) =
     member this.Item = item
 
 type IInventoryManager =
-    abstract member AddItemEvent: Event<InventoryEventArgs>
-    abstract member RemoveItemEvent: Event<InventoryEventArgs>
-
-    [<CLIEvent>]
-    abstract OnAddItemEventHandler: IEvent<InventoryEventArgs>
-
+ 
     [<CLIEvent>]
     abstract OnRemoveItemEventHandler: IEvent<InventoryEventArgs>
 

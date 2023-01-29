@@ -2,7 +2,6 @@
 
 open Godot
 
-
 module CommonColors =
     let WarningColor = Color(255f, 255f, 0f)
     let IdleColor = Color(140f, 140f, 140f)

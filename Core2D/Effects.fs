@@ -13,7 +13,7 @@ type BloodSpatterFS() =
 
     member val Timer = null with get, set
 
-    member this.getGlobalPositionOfNode2d nodeName =
+    member this.GetGlobalPositionOfNode2d nodeName =
         (this.GetTree().CurrentScene.FindNode(nodeName) :?> Node2D)
             .GlobalPosition
 
