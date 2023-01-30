@@ -37,7 +37,7 @@ type HurtBoxFs() =
 
     member this.IsInvincible
         with get () = isInvincible
-        and set (value) =
+        and set value =
             isInvincible <- value
             //todo: see if this stack overflow can still can be reproduced
             //todo: figure out why this is causing a stack overflow when shooting enemy
@@ -56,7 +56,7 @@ type HurtBoxFs() =
 
     member this.InvincibleStartedEvent
         with get () = (this :> IHurtBox).InvincibleStartedEvent
-        and set (value) = (this :> IHurtBox).InvincibleStartedEvent <- value
+        and set value = (this :> IHurtBox).InvincibleStartedEvent <- value
 
     member this.InvincibleEndedEvent = (this :> IHurtBox).InvincibleEndedEvent
 
@@ -65,7 +65,7 @@ type HurtBoxFs() =
         match currentTimer with
         | Some timer ->
             let conn =
-                SignalConnection.Default Signals.Timer.Timeout this timer (nameof (this.OnTimerTimeout))
+                SignalConnection.Default Signals.Timer.Timeout this timer (nameof this.OnTimerTimeout)
 
             match timer.TryConnectSignal conn with
             | err when err <> Error.Ok ->
@@ -81,10 +81,10 @@ type HurtBoxFs() =
         currentTimer
 
     member this.InstantiateTimer path =
-        this.GetNodeOption<Timer> (path) |> this.AppendTimerSignals
+        this.GetNodeOption<Timer> path |> this.AppendTimerSignals
 
     member this.InstantiateCollisionShape path =
-        this.GetNodeOption<CollisionShape2D> (path)
+        this.GetNodeOption<CollisionShape2D> path
 
     member this.StartInvincibility() = (this :> IHurtBox).StartInvincibility
 

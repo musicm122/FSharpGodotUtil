@@ -79,7 +79,6 @@ module InputUtil =
 
         Vector2(x, y).Normalized()
 
-
 module MouseUtil =
     let isMouseButtonPressed (btnEvent: InputEventMouseButton) (btnListItem: ButtonList) =
         btnEvent.ButtonIndex = int btnListItem && btnEvent.Pressed
@@ -102,7 +101,7 @@ module DIUtil =
 module ProjectSetting =
     let getGravity =
         ProjectSettings.GetSetting("physics/3d/default_gravity") :?> float32
-
+        
 module NodeUtil =
 
     let inline getNodeResultFromPath<'A when 'A: not struct> (node: Node) (path: NodePath) =

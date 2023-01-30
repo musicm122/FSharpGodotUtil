@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Navigation.fs" />
-        <Compile Include="CollisionBoxes.fs" />
-        <Compile Include="Components.fs" />
-        <Compile Include="Effects.fs" />
-        <Compile Include="Camera.fs" />
-        <Compile Include="Extensions.fs" />
+        <Compile Include="Navigation.fs"/>
+        <Compile Include="CollisionBoxes.fs"/>
+        <Compile Include="Components.fs"/>
+        <Compile Include="Effects.fs"/>
+        <Compile Include="Camera.fs"/>
+        <Compile Include="Extensions.fs"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Common\Common\Common.fsproj" />
+        <ProjectReference Include="..\Common\Common\Common.fsproj"/>
     </ItemGroup>
 
     <Target Name="FSharpLint" AfterTargets="BeforeBuild">

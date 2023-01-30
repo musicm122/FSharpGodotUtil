@@ -24,10 +24,10 @@ type StateMessage<'A> =
 type StateNode() =
     inherit Node()
     member val Update: (float32 -> unit) option = None with get, set
-    member val PhysicsUpdate: ((float32 -> unit) option) = None with get, set
-    member val Enter: ((StateMessage<'A> -> unit) option) = None with get, set
-    member val Exit: ((unit -> unit) option) = None with get, set
-    member val HandleInputs: ((InputEvent -> unit) option) = None with get, set
+    member val PhysicsUpdate: (float32 -> unit) option = None with get, set
+    member val Enter: (StateMessage<'A> -> unit) option = None with get, set
+    member val Exit: (unit -> unit) option = None with get, set
+    member val HandleInputs: (InputEvent -> unit) option = None with get, set
 
 
 //virtual void HandleInputs(InputEvent inputEvent)
@@ -52,12 +52,12 @@ type StateMachineNode() =
 
     let exitCurrentStateOption (currentStateOption: StateNode option) =
         match currentStateOption with
-        | (Some current) -> current |> exitState
+        | Some current -> current |> exitState
         | _ -> ()
 
     let enterNewStateOption (newState: StateNode option) msg =
         match newState with
-        | (Some newState) -> (newState, msg) ||> enterState
+        | Some newState -> (newState, msg) ||> enterState
         | _ -> ()
 
     let updateState (currentState: StateNode option) (newState: StateNode option) msg : StateNode option =
@@ -69,7 +69,7 @@ type StateMachineNode() =
 
     member this.CurrentState
         with get () = currentState
-        and private set (value) = currentState <- value
+        and private set value = currentState <- value
 
     [<Export>]
     member val InitialState: option<StateNode> = None with get, set
@@ -78,9 +78,9 @@ type StateMachineNode() =
 
     override this._UnhandledInput(inputEvent: InputEvent) =
         match this.CurrentState with
-        | (Some state) ->
+        | Some state ->
             match state.HandleInputs with
-            | (Some handleInputs) -> handleInputs inputEvent
+            | Some handleInputs -> handleInputs inputEvent
             | _ -> ()
         | _ -> ()
 

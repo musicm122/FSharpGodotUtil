@@ -19,7 +19,7 @@ module Effect =
 [<Struct>]
 type EffectBuilder =
     member inline __.Return value = Effect.value value
-    member inline __.Zero() = Effect.value (Unchecked.defaultof<_>)
+    member inline __.Zero() = Effect.value Unchecked.defaultof<_>
     member inline __.ReturnFrom(effect: Effect<'Env, 'Out>) = effect
     member inline __.Bind(effect, fn) = Effect.bind fn effect
 

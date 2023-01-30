@@ -6,12 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Components.fs" />
+        <Compile Include="Components.fs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Godot.Signals" Version="3.4.1" />
-        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3" />
+        <PackageReference Include="Godot.Signals" Version="3.4.1"/>
+        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common\Common.fsproj" />
+        <ProjectReference Include="..\Common\Common\Common.fsproj"/>
     </ItemGroup>
     <Target Name="FSharpLint" AfterTargets="BeforeBuild">
         <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint CoreUI.fsproj" IgnoreExitCode="true"/>

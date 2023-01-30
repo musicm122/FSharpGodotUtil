@@ -31,7 +31,7 @@ type BloodSpatterFS() =
     override this._Ready() =
         this.Timer <- this.GetNode<Timer>(this.TimerNodePath)
 
-        this.Timer.Connect(Signals.Timer.Timeout, this, nameof (this.OnTimeout))
+        this.Timer.Connect(Signals.Timer.Timeout, this, nameof this.OnTimeout)
         |> ignore
 
         this.UpdateDirection ()

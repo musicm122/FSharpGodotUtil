@@ -47,7 +47,7 @@ type SignalDisconnectionProblem =
 
 type SignalConnection =
     { MethodName: string
-      Source: Godot.Object
+      Source: Object
       Target: Object
       Signal: string
       Args: Godot.Collections.Array option }
@@ -73,5 +73,5 @@ exception GodotSignalConnectionFailureException of (SignalConnection * Error)
 exception GodotSignalConnectionFailureDetailedException of (SignalConnection * Error * string)
 
 exception GodotSignalDisconnectionFailureException of SignalConnection * SignalDisconnectionProblem
-exception GodotAudioSignalException of Godot.Error * string
-exception GodotSignalException of Godot.Error * string
+exception GodotAudioSignalException of Error * string
+exception GodotSignalException of Error * string

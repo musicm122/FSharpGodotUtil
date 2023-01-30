@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="StateMachineNode.fs" />
-        <Compile Include="StateMachine.fs" />
+        <Compile Include="StateMachineNode.fs"/>
+        <Compile Include="StateMachine.fs"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Common\Common\Common.fsproj" />
+        <ProjectReference Include="..\Common\Common\Common.fsproj"/>
     </ItemGroup>
 
     <Target Name="FSharpLint" AfterTargets="BeforeBuild">

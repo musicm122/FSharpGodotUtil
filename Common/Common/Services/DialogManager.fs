@@ -81,7 +81,7 @@ type DialogManager() =
                 let dialog = DialogicSharp.Start(dialogArg.Timeline)
 
                 let result =
-                    dialog.Connect(Timeline_End.AsString(), this, nameof this.DialogListener)
+                    dialog.Connect(TimelineEnd.AsString(), this, nameof this.DialogListener)
 
                 match result with
                 | Error.Ok -> owner.AddChild(dialog)

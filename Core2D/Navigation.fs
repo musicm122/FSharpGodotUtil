@@ -10,10 +10,10 @@ type PathChanged = delegate of Vector2 [] -> unit
 
 type NavClient2D() =
     inherit NavigationAgent2D()
-    member this.PathChanged: option<(Vector2 [] -> unit)> = None
-    member this.TargetReached: option<(unit -> unit)> = None
-    member this.VelocityComputed: option<(Vector2 -> unit)> = None
-    member this.MoveToTarget: option<(Vector2 -> unit)> = None
+    member this.PathChanged: option<Vector2 [] -> unit> = None
+    member this.TargetReached: option<unit -> unit> = None
+    member this.VelocityComputed: option<Vector2 -> unit> = None
+    member this.MoveToTarget: option<Vector2 -> unit> = None
 
     member val Velocity = Vector2(0.0f, 0.0f) with get, set
 
@@ -30,7 +30,7 @@ type NavClient2D() =
 
     member this.HasArrivedAtTarget = base.IsNavigationFinished()
 
-    member this.OnPathChanged() = this.EmitSignal(nameof (PathChanged))
+    member this.OnPathChanged() = this.EmitSignal(nameof PathChanged)
 
     member this.OnVelocityComputed safeVelocity =
         match this.VelocityComputed with
@@ -38,8 +38,8 @@ type NavClient2D() =
         | None -> ()
 
         if this.HasArrivedAtTarget then
-            this.EmitSignal(nameof (TargetReached), Array.empty<Vector2>)
-            this.EmitSignal(nameof (TargetReached))
+            this.EmitSignal(nameof TargetReached, Array.empty<Vector2>)
+            this.EmitSignal(nameof TargetReached)
         else
             match this.MoveToTarget with
             | Some movToTarget -> movToTarget safeVelocity
@@ -67,7 +67,7 @@ type NavClient2D() =
         let velocityComputedSignal = "velocity_computed"
         this.SetNavServerEdgeConnectionMargin 400f
 
-        match this.Connect(pathChangedSignal, this, nameof (this.OnPathChanged)) with
+        match this.Connect(pathChangedSignal, this, nameof this.OnPathChanged) with
         | Error.Ok -> ()
         | err ->
             failwith (
@@ -77,7 +77,7 @@ type NavClient2D() =
                 + err.ToString()
             )
 
-        match this.Connect(velocityComputedSignal, this, nameof (this.OnVelocityComputed)) with
+        match this.Connect(velocityComputedSignal, this, nameof this.OnVelocityComputed) with
         | Error.Ok -> ()
         | err ->
             failwith (

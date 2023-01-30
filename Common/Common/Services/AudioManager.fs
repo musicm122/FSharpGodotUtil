@@ -16,10 +16,10 @@ type AudioManager() =
     static member val freeChannels: Queue<AudioStreamPlayer> = Queue<AudioStreamPlayer>() with get, set
     static member val queue: Queue<string> = Queue<string>() with get, set
 
-    member this.onStreamFinished(channel: AudioStreamPlayer) : unit =
+    member this.OnStreamFinished(channel: AudioStreamPlayer) : unit =
         AudioManager.freeChannels.Enqueue channel
 
-    member this.bindChannelToParent(channel: AudioStreamPlayer) : unit =
+    member this.BindChannelToParent(channel: AudioStreamPlayer) : unit =
         this.AddChild(channel)
         AudioManager.freeChannels.Enqueue channel
 
@@ -38,13 +38,13 @@ type AudioManager() =
         channel.Bus <- busName
 
         let args = Some(new Godot.Collections.Array(channel))
-        match channel.Connect("finished", this, nameof this.onStreamFinished, new Godot.Collections.Array(channel)) with
+        match channel.Connect("finished", this, nameof this.OnStreamFinished, new Godot.Collections.Array(channel)) with
         | err when err = Error.Ok -> channel
         | ex ->
             let gEx =
                 GodotAudioSignalException(
                     ex,
-                    $"connecting {channel.GetType().ToString()} signal 'finished' to {nameof this.onStreamFinished} failed"
+                    $"connecting {channel.GetType().ToString()} signal 'finished' to {nameof this.OnStreamFinished} failed"
                 )
 
             raise gEx
@@ -54,7 +54,7 @@ type AudioManager() =
 
         [ 0..TotalChannels ]
         |> List.map initChannelOnMaster
-        |> List.iter this.bindChannelToParent
+        |> List.iter this.BindChannelToParent
 
         ignore
 
