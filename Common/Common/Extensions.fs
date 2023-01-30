@@ -314,14 +314,14 @@ module Extensions =
 
         member this.ToSeq<'A>() =
             seq {
-                for i in 0 .. this.Count do
+                for i in 0 .. this.Count-1 do
                     yield (this.Item(i) :?> 'A)
             }
 
         member this.ToArray<'A>() =
             let arr = Array.zeroCreate<'A> this.Count
 
-            for i = 0 to this.Count do
+            for i = 0 to this.Count-1 do
                 arr[i] <- (this.Item(i) :?> 'A)
 
             arr
