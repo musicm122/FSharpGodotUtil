@@ -7,27 +7,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Reader.fs"/>
-        <Compile Include="Constants.fs"/>
-        <Compile Include="Types.fs"/>
-        <Compile Include="Util.fs"/>
-        <Compile Include="Interfaces.fs"/>
-        <Compile Include="Events.fs"/>
-        <Compile Include="Extensions.fs"/>
-        <Compile Include="Validation.fs"/>
-        <Compile Include="Services\ThirdParty\Dialogic.fs"/>
-        <Compile Include="Services\DialogManager.fs"/>
-        <Compile Include="Services\AudioManager.fs"/>
-        <Compile Include="Services\InventoryManager.fs"/>
-        <Compile Include="Services\Log.fs"/>
-        <Compile Include="Services\Global.fs"/>
-        <Compile Include="Services\env.fs"/>
+        <Compile Include="Reader.fs" />
+        <Compile Include="Constants.fs" />
+        <Compile Include="Types.fs" />
+        <Compile Include="Util.fs" />
+        <Compile Include="Interfaces.fs" />
+        <Compile Include="Events.fs" />
+        <Compile Include="Extensions.fs" />
+        <Compile Include="Validation.fs" />
+        <Compile Include="Services\Log.fs" />
+        <Compile Include="Services\ThirdParty\Dialogic.fs" />
+        <Compile Include="Services\DialogManager.fs" />
+        <Compile Include="Services\AudioManager.fs" />
+        <Compile Include="Services\InventoryManager.fs" />
+        <Compile Include="Services\Global.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FSharp.Json" Version="0.4.1"/>
-        <PackageReference Include="Godot.Signals" Version="3.4.1"/>
-        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3"/>
+        <PackageReference Include="FSharp.Json" Version="0.4.1" />
+        <PackageReference Include="Godot.Signals" Version="3.4.1" />
+        <PackageReference Include="GodotSharp.SourceGenerators" Version="1.3.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -40,7 +39,7 @@
     </ItemGroup>
 
     <Target Name="FSharpLint" AfterTargets="BeforeBuild">
-        <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint Common.fsproj" IgnoreExitCode="true"/>
+        <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint Common.fsproj" IgnoreExitCode="true" />
     </Target>
 
 </Project>

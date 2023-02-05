@@ -1,6 +1,7 @@
 ﻿namespace Common.Manager
 
 open System.Collections.Generic
+open Common.Interfaces
 open Common.Types
 open Godot
 
@@ -74,9 +75,6 @@ type AudioManager() =
         |  ex ->
             GD.PrintErr([ex,"AudioManager Exception thrown"])
             failwith ex.Message
-
-type IPlayAudio =
-    abstract member PlaySound: string -> unit
 
 type AudioService() =
     inherit Node()

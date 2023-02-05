@@ -1,26 +1,19 @@
 ﻿namespace Common.Services
 
+open Common.Interfaces
 open Godot
-open Common.Reader
 
 module Log =
-    type Logger() =
-        interface ILogger with
-            member this.Debug fmt =
-                let ap s =
-                    Effect.apply (fun (x: #ILog) -> x.Logger.Debug s)
+    let Logger: ILogger =
+        { new ILogger with
+            member this.Debug args = GD.Print("Debug:", args)
 
-                GD.Print(fmt, ap)
+            member this.Info args = GD.Print("Info:", args)
 
-            member this.Error fmt =
-                let ap s =
-                    Effect.apply (fun (x: #ILog) -> x.Logger.Error s)
+            member this.Error args = GD.PrintErr(args) }
 
-                GD.PrintErr(fmt, ap)
-
-    let (live: ILogger) = Logger()
-
-type Log() =
-    interface ILogger with
-        member this.Debug(args) = GD.Print args
-        member this.Error(args) = GD.PrintErr args
+    let defaultLogger: ILogger =
+        { new ILogger with
+            member this.Debug args = printfn "Debug:%A" args
+            member this.Info args = printfn "Info:%A" args
+            member this.Error args = printfn "Error:%A" args }

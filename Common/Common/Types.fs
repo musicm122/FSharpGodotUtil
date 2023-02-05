@@ -3,6 +3,72 @@
 open System
 open Godot
 
+type DialogArg =
+    { Timeline: string
+      MethodName: string
+      ShouldRemove: bool
+      OnComplete: (unit -> unit) option }
+
+type DatabaseSaveStatus =
+    | Success
+    | Failure of string
+
+type ItemCategory =
+    | Consumable
+    | Ammo
+    | Key
+    | Equipment
+    | Other
+
+type CurrencyDefinition =
+    { Id: Guid
+      Name: string
+      Description: string
+      MaxCarryAmount: int
+      PickupSoundPath: option<string>
+      ImagePath: option<string> }
+
+type ItemDefinition =
+    { Category: ItemCategory
+      Id: Guid
+      Name: string
+      Description: string
+      MaxCarryAmount: int
+      Weight: float32
+      PickupSoundPath: option<string>
+      UsageSoundPath: option<string>
+      ImagePath: option<string> }
+
+    static member Default =
+        { Id = Guid.NewGuid()
+          Category = ItemCategory.Other
+          Name = ""
+          Description = ""
+          MaxCarryAmount = 99
+          Weight = 1.0f
+          PickupSoundPath = None
+          UsageSoundPath = None
+          ImagePath = None }
+
+type ItemInstance =
+    { Definition: ItemDefinition
+      Count: int }
+
+    static member Default(definition) = { Definition = definition; Count = 1 }
+
+type ItemRemovalResult =
+    | Success
+    | Failure
+
+type ItemAdditionResult =
+    | Success
+    | Failure
+
+
+type InventoryEventArgs(item: ItemInstance) =
+    inherit EventArgs()
+    member this.Item = item
+
 type MoveDirection =
     | Left
     | Right

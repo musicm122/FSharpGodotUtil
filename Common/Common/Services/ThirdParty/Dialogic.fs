@@ -55,18 +55,18 @@ type DialogicSharp() =
         DialogicSharp._dialogic.Call("start", timeline, default_timeline, dialogScenePath, useCanvasInstead) :?> 'T
 
     static member Load(?slotName: String) =
-        let slot_name = (defaultArg slotName) ""
-        DialogicSharp._dialogic.Call("load", slot_name)
+        let slotName = (defaultArg slotName) ""
+        DialogicSharp._dialogic.Call("load", slotName)
 
     static member Save(?slotName: String) =
-        let slot_name = (defaultArg slotName) ""
-        DialogicSharp._dialogic.Call("save", slot_name)
+        let slotName = (defaultArg slotName) ""
+        DialogicSharp._dialogic.Call("save", slotName)
 
     static member GetSlotNames() =
         DialogicSharp._dialogic.Call("get_slot_names") :?> GCArray
 
-    static member EraseSlot(slot_name: String) =
-        DialogicSharp._dialogic.Call("erase_slot", slot_name)
+    static member EraseSlot(slotName: String) =
+        DialogicSharp._dialogic.Call("erase_slot", slotName)
 
     static member HasCurrentDialogNode() =
         DialogicSharp._dialogic.Call("has_current_dialog_node") :?> Boolean

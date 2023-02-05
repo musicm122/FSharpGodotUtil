@@ -3,76 +3,9 @@
 open System
 open System.IO
 open System.Collections.Generic
+open Common.Interfaces
+open Common.Types
 open FSharp.Json
-
-type DatabaseSaveStatus =
-    | Success
-    | Failure of string
-
-type ItemCategory =
-    | Consumable
-    | Ammo
-    | Key
-    | Equipment
-    | Other
-
-type CurrencyDefinition =
-    { Id: Guid
-      Name: string
-      Description: string
-      MaxCarryAmount: int
-      PickupSoundPath: option<string>
-      ImagePath: option<string> }
-
-type ItemDefinition =
-    { Category: ItemCategory
-      Id: Guid
-      Name: string
-      Description: string
-      MaxCarryAmount: int
-      Weight: float32
-      PickupSoundPath: option<string>
-      UsageSoundPath: option<string>
-      ImagePath: option<string> }
-
-    static member Default =
-        { Id = Guid.NewGuid()
-          Category = ItemCategory.Other
-          Name = ""
-          Description = ""
-          MaxCarryAmount = 99
-          Weight = 1.0f
-          PickupSoundPath = None
-          UsageSoundPath = None
-          ImagePath = None }
-
-type ItemInstance =
-    { Definition: ItemDefinition
-      Count: int }
-
-    static member Default(definition) = { Definition = definition; Count = 1 }
-
-type InventoryEventArgs(item: ItemInstance) =
-    inherit EventArgs()
-    member this.Item = item
-
-type IInventoryManager =
- 
-    [<CLIEvent>]
-    abstract OnRemoveItemEventHandler: IEvent<InventoryEventArgs>
-
-    abstract member AddItems: ItemInstance -> int -> unit
-    abstract member RemoveItems: ItemInstance -> int -> unit
-    abstract member HasItemInInventory: string -> bool
-    abstract member HasMinimumAmountOfItem: string -> int -> bool
-    abstract member GetItemsOfCategory: ItemCategory -> IEnumerable<ItemInstance>
-    abstract member GetAllItems: unit -> IEnumerable<ItemInstance>
-
-type IDatabase =
-    //abstract member saveItem: item: ItemDefinition -> SaveSta
-    abstract member FindById: id: Guid -> Option<ItemDefinition>
-    abstract member GetByCategory: category: ItemCategory -> IEnumerable<ItemDefinition>
-    abstract member GetAllDefinitions: unit -> IEnumerable<ItemDefinition>
 
 type JsonItemDatabase(jsonFilePath: string) =
     let db = readOnlyDict []
@@ -82,7 +15,7 @@ type JsonItemDatabase(jsonFilePath: string) =
     member this.GetByCategory category =
         (this :> IDatabase).GetByCategory category
 
-    member this.All = (this :> IDatabase).GetAllDefinitions ()
+    member this.All = (this :> IDatabase).GetAllDefinitions()
 
     member this.RawJson =
         let vals = db.Values |> Seq.map Json.serialize
@@ -99,8 +32,8 @@ type JsonItemDatabase(jsonFilePath: string) =
             use sw = new StreamWriter(jsonFilePath)
             sw.Write this.RawJson
             DatabaseSaveStatus.Success
-        with
-        | ex -> DatabaseSaveStatus.Failure ex.Message
+        with ex ->
+            DatabaseSaveStatus.Failure ex.Message
 
     interface IDatabase with
         member this.GetAllDefinitions() = db.Values
@@ -112,3 +45,54 @@ type JsonItemDatabase(jsonFilePath: string) =
 
         member this.GetByCategory category =
             db.Values |> Seq.filter (fun def -> def.Category = category)
+
+
+type InventoryManager(db: IDatabase) =
+    //let addItemEvent = new Event<InventoryEventArgs>()
+    // let removeItemEvent = new Event<InventoryEventArgs>()
+    
+    member this.InventoryManagerImpl = (this :> IInventoryManager)
+    member this.ItemDb = db
+    member this.Items = List<ItemInstance>()
+
+    interface IInventoryManager with
+        member this.AddItems item count =
+            try
+                seq { 0..count }
+                |> Seq.map (fun i -> item)
+                |> Seq.append this.Items
+                |> AddItemResult.Success
+            with :? Exception as ex ->
+                AddItemResult.Fail ex.Message
+
+        member this.GetAllItems() = this.Items
+
+        member this.GetItemsOfCategory category =
+            try 
+                this.Items
+                |> Seq.filter (fun item -> item.Definition.Category = category)
+                |> GetItemOfCategoryResult.Success
+            with :? Exception as ex ->
+                 GetItemOfCategoryResult.Fail ex.Message
+                 
+        member this.HasItemInInventory itemName =
+            this.Items |> Seq.exists (fun item -> item.Definition.Name = itemName)
+
+        member this.HasMinimumAmountOfItem name amount =
+            this.Items
+            |> Seq.filter (fun item -> item.Definition.Name = name)
+            |> Seq.length = amount
+
+
+        [<CLIEvent>]
+        member this.OnRemoveItemEventHandler = this.InventoryManagerImpl.OnRemoveItemEventHandler
+
+        member this.RemoveItems item count =
+            let index = this.Items.FindIndex(fun i -> i.Definition = item.Definition)            
+            match this.Items[index].Count with
+            | currentCount when currentCount >= count ->
+                let newItem = this.Items[index]
+                this.Items[index] <- { newItem with Count = (currentCount - count) }
+                RemoveItemResult.Success this.Items[index]
+            | _ ->
+                RemoveItemResult.Fail "Not enough of item"

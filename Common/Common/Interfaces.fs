@@ -1,7 +1,60 @@
 ﻿namespace Common.Interfaces
 
+open System
+open System.Collections.Generic
+open Common.Types
 open Common.Uti
 open Godot
+open Microsoft.CodeAnalysis.Operations
+
+[<Interface>]
+type ILogger =
+    abstract Debug: obj[] -> unit
+    abstract Info: obj[] -> unit
+    abstract Error: obj[] -> unit
+
+[<Interface>]
+type IDialogManager =
+    abstract member DialogListener: System.Object -> unit
+    abstract member DialogComplete: unit -> unit
+    abstract member StartDialog: Node -> DialogArg -> unit
+    abstract member PauseForCompletion: float32 -> unit
+
+type IPlayAudio =
+    abstract member PlaySound: string -> unit
+
+
+type AddItemResult=
+    | Success of IEnumerable<ItemInstance>
+    | Fail of String
+
+type RemoveItemResult=
+    | Success of ItemInstance
+    | Fail of String
+    
+
+type GetItemOfCategoryResult =
+    | Success of IEnumerable<ItemInstance>
+    | Fail of String
+
+[<Interface>]
+type IInventoryManager =
+    [<CLIEvent>]
+    abstract OnRemoveItemEventHandler: IEvent<InventoryEventArgs>
+
+    abstract member AddItems: ItemInstance -> int -> AddItemResult
+    abstract member RemoveItems: ItemInstance -> int -> RemoveItemResult
+    abstract member HasItemInInventory: string -> bool
+    abstract member HasMinimumAmountOfItem: string -> int -> bool
+    abstract member GetItemsOfCategory: ItemCategory -> GetItemOfCategoryResult 
+    abstract member GetAllItems: unit -> IEnumerable<ItemInstance>
+
+[<Interface>]
+type IDatabase =
+    //abstract member saveItem: item: ItemDefinition -> SaveSta
+    abstract member FindById: id: Guid -> Option<ItemDefinition>
+    abstract member GetByCategory: category: ItemCategory -> IEnumerable<ItemDefinition>
+    abstract member GetAllDefinitions: unit -> IEnumerable<ItemDefinition>
 
 type IPauseable =
     abstract Pause: unit -> unit
@@ -43,7 +96,7 @@ type ScreenShakeInstance =
         float32 (this.Intensity()) * (previous + (delta * (newX - previous)))
 
     member this.NewPointXY(oldX, oldY, delta) =
-        Vector2(this.NewPoint (oldX, delta), this.NewPoint (oldY, delta))
+        Vector2(this.NewPoint(oldX, delta), this.NewPoint(oldY, delta))
 
     member this.UpdatePos(newX, newY) =
         this.X <- newX
@@ -69,3 +122,12 @@ type ScreenShakeInstance =
           Y = 0f
           Frequency = 0.0f
           Amplitude = 0.0f }
+
+
+type IServices =
+    { Logger: ILogger
+      Pauser: IPauseable
+      AudioManager: IPlayAudio
+      DialogManager: IDialogManager
+      InventoryManager: IInventoryManager
+      Database: IDatabase }

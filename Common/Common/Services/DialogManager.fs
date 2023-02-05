@@ -1,6 +1,7 @@
 ﻿namespace Common.Services
 
 open Common.Events
+open Common.Types
 open Godot
 open Common.Interfaces
 open Common.Services.ThirdParty.Dialogic
@@ -12,19 +13,6 @@ module DialogEvents =
     let DialogInteractionComplete = Event<unit>()
 
     let PlayerInteractionAvailabilityChange = Event<bool>()
-
-type DialogArg =
-    { Timeline: string
-      MethodName: string
-      ShouldRemove: bool
-      OnComplete: (unit -> unit) option }
-
-[<Interface>]
-type IDialogManager =
-    abstract member DialogListener: System.Object -> unit
-    abstract member DialogComplete: unit -> unit
-    abstract member StartDialog: Node -> DialogArg -> unit
-    abstract member PauseForCompletion: float32 -> unit
 
 type DialogManager() =
     inherit Node()

@@ -1,39 +1,37 @@
 ﻿namespace Common.Reader
 
-[<Struct>]
-type Effect<'Env, 'Out> = Effect of ('Env -> 'Out)
 
-module Effect =
-    /// Create value with no dependency requirements.
-    let inline value (x: 'Out) : Effect<'Env, 'Out> = Effect(fun _ -> x)
-    /// Create value which uses depenendency.
-    let inline apply (fn: 'Env -> 'Out) : Effect<'Env, 'Out> = Effect fn
-    let run (env: 'Env) (Effect fn) : 'Out = fn env
+type Reader<'Env,'A> = Reader of action:('Env -> 'A)
 
-    let inline bind (fn: 'A -> Effect<'Env, 'B>) effect =
-        Effect (fun env ->
-            let x = run env effect // compute result of the first effect
-            run env (fn x) // run second effect, based on result of first one
-        )
+module Reader =
+    /// Run a Reader with a given environment
+    let run env (Reader action)  = 
+        action env  // simply call the inner function
 
-[<Struct>]
-type EffectBuilder =
-    member inline __.Return value = Effect.value value
-    member inline __.Zero() = Effect.value Unchecked.defaultof<_>
-    member inline __.ReturnFrom(effect: Effect<'Env, 'Out>) = effect
-    member inline __.Bind(effect, fn) = Effect.bind fn effect
+    /// Create a Reader which returns the environment itself
+    let ask = Reader id 
 
+    /// Map a function over a Reader 
+    let map f reader = 
+        Reader (fun env -> f (run env reader))
 
-[<Interface>]
-type ILogger =
-    abstract Debug: obj [] -> unit
-    abstract Error: obj [] -> unit
+    /// flatMap a function over a Reader 
+    let bind f reader =
+        let newAction env =
+            let x = run env reader 
+            run env (f x)
+        Reader newAction
+
+    /// Transform a Reader's environment from subtype to supertype.
+    let withEnv (f:'SuperEnv->'SubEnv) reader = 
+        Reader (fun superEnv -> (run (f superEnv) reader))  
+        // The new Reader environment is now "superEnv"
 
 
+type ReaderBuilder() =
+    member this.Return(x) = Reader (fun _ -> x)
+    member this.Bind(x,f) = Reader.bind f x
+    member this.Zero() = Reader (fun _ -> ())
 
-[<Interface>]
-type ILog =
-    abstract Logger: ILogger
-
-type IPlayAudio =
-    abstract member PlaySound: string -> unit
+// the builder instance
+//let reader = ReaderBuilder()
