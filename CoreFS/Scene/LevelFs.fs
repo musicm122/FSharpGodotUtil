@@ -40,6 +40,6 @@ type LevelFS() =
     override this._UnhandledInput(event: InputEvent) =
         match event with
         | :? InputEventMouseButton as buttonEvent ->
-            if buttonEvent.isLeftButtonPressed () then
+            if buttonEvent.IsLeftButtonPressed () then
                 Input.MouseMode <- Input.MouseModeEnum.Captured
         | _ -> ()

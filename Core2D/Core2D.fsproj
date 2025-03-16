@@ -15,16 +15,18 @@
         <Compile Include="Extensions.fs"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Reference Include="GodotSharp">
-            <HintPath>..\Assemblies\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
+    
     <ItemGroup>
         <ProjectReference Include="..\Common\Common\Common.fsproj"/>
     </ItemGroup>
 
+    
+    <ItemGroup>
+      <Reference Include="GodotSharp">
+        <HintPath>..\Assemblies\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+    
     <Target Name="FSharpLint" AfterTargets="BeforeBuild">
         <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint Core2D.fsproj" IgnoreExitCode="true"/>
     </Target>

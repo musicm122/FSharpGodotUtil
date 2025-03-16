@@ -7,20 +7,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Reader.fs" />
         <Compile Include="Constants.fs" />
+        <Compile Include="Reader.fs" />
         <Compile Include="Types.fs" />
-        <Compile Include="Util.fs" />
         <Compile Include="Interfaces.fs" />
+        <Compile Include="Util.fs" />
         <Compile Include="Events.fs" />
         <Compile Include="Extensions.fs" />
         <Compile Include="Validation.fs" />
         <Compile Include="Services\Log.fs" />
+        <Compile Include="Services\AudioManager.fs" />
+        <Compile Include="Services\Database.fs" />
+        <Compile Include="Services\InventoryManager.fs" />
         <Compile Include="Services\ThirdParty\Dialogic.fs" />
         <Compile Include="Services\DialogManager.fs" />
-        <Compile Include="Services\AudioManager.fs" />
-        <Compile Include="Services\InventoryManager.fs" />
-        <Compile Include="Services\Global.fs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -38,8 +38,8 @@
         </Reference>
     </ItemGroup>
 
-    <Target Name="FSharpLint" AfterTargets="BeforeBuild">
-        <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint Common.fsproj" IgnoreExitCode="true" />
-    </Target>
+<!--    <Target Name="FSharpLint" AfterTargets="BeforeBuild">-->
+<!--        <Exec ConsoleToMSBuild="true" Command="dotnet fsharplint -f msbuild lint Common.fsproj" IgnoreExitCode="true" />-->
+<!--    </Target>-->
 
 </Project>

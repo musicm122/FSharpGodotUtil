@@ -6,7 +6,6 @@ open Common.Constants
 open Godot
 open Microsoft.FSharp.Reflection
 open System.ComponentModel
-open System
 open System.Reflection
 
 module EnumUtil =

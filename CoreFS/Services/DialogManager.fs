@@ -2,6 +2,7 @@
 
 open System.Threading.Tasks
 open Common.Interfaces
+open Common.Types
 open CoreFS.Events
 open Godot
 open Common
@@ -41,7 +42,9 @@ type DialogManager() =
 
     interface IPauseable with
         member this.Pause() = PauseEvents.Pause.Trigger()
-        member this.Unpause() = PauseEvents.Pause.Trigger()
+        member this.Unpause() = PauseEvents.Unpause.Trigger()
+        member this.TogglePause() = failwith "todo"
+
 
     interface IDialogManager with
         member this.PauseForCompletion seconds =
@@ -76,7 +79,7 @@ type DialogManager() =
 
         member this.StartDialog (owner: Node) (dialogArg: DialogArg) =
             try
-                this.dialogCompleteCallback <- dialogArg.onComplete
+                this.dialogCompleteCallback <- dialogArg.OnComplete
 
                 GD.Print(
                     "DialogManager.StartDialog called with args "
@@ -85,7 +88,7 @@ type DialogManager() =
                 DialogEvents.DialogInteractionStart.Trigger()
 
                 let dialog =
-                    DialogicSharp.Start(dialogArg.timeline)
+                    DialogicSharp.Start(dialogArg.Timeline)
 
                 let result =
                     dialog.Connect(Timeline_End.AsString(), this, nameof this.DialogListener)

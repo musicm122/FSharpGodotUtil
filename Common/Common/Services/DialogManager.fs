@@ -44,6 +44,7 @@ type DialogManager() =
     interface IPauseable with
         member this.Pause() = PauseEvents.Pause.Trigger()
         member this.Unpause() = PauseEvents.Pause.Trigger()
+        member this.TogglePause() = failwith "todo"
 
     interface IDialogManager with
         member this.PauseForCompletion seconds =

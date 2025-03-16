@@ -2,7 +2,6 @@
 
 open Godot
 open Common
-open Common.Extensions
 
 type TitleFs() =
     inherit Node()

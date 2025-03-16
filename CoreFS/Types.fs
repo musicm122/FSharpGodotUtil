@@ -3,7 +3,6 @@
 open Common.Constants
 open Common.Interfaces
 open Common.Uti
-open Godot
 
 type PlayerState =
     | Idle
@@ -12,7 +11,6 @@ type PlayerState =
     | Jump
     | Die
     
-
 module CustomEvents =
     let PlayerInteracting = Event<IExaminable>()
 

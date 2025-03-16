@@ -5,5 +5,6 @@ open Godot
 
 type Log() =
     interface ILogger with
-        member this.debug(args) = GD.Print args
-        member this.error(args) = GD.PrintErr args
+        member this.Debug(args) = GD.Print args
+        member this.Error(args) = GD.PrintErr args
+        member this.Info(args) = GD.PrintS  args

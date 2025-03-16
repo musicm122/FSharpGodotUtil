@@ -1,9 +1,7 @@
 ﻿namespace Core2D.Components
 
 open Common.Constants
-open Common.Types
 open Godot
-open Common.Extensions
 
 [<Tool>]
 type DebugDrawNode() =

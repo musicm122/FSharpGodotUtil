@@ -25,7 +25,9 @@ type RollingCameraFs() =
 
     override this._PhysicsProcess _ =
         if this.IsEnabled then
-            this.GetVelocityInMoveDirection() |> this.MoveAndSlide |> ignore
+            this.GetVelocityInMoveDirection() 
+            |> this.MoveAndSlide 
+            |> ignore
 
 
 

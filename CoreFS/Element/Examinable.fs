@@ -2,6 +2,7 @@
 
 open System.Threading.Tasks
 open Common.Interfaces
+open Common.Types
 open Common.Uti
 open CoreFS.Events
 open CoreFS.Global
@@ -20,7 +21,7 @@ type ExamineFS() =
         DialogEvents.PlayerInteractionAvailabilityChange.Publish
 
     member this.OnInteractionComplete() =
-        this.Log.debug [| "Examinable.OnInteractionComplete called\r\n" |]
+        this.Log.Debug [| "Examinable.OnInteractionComplete called\r\n" |]
 
     member val CanInteract = false with get, set
 
@@ -30,13 +31,13 @@ type ExamineFS() =
     interface IExaminable with
         member this.OnExaminableBodyEntered(body: Node) =
             if body.IsPlayer() then
-                this.Log.debug [| "Examinable.OnExaminableBodyEntered called \r\n" |]
+                this.Log.Debug [| "Examinable.OnExaminableBodyEntered called \r\n" |]
                 DialogEvents.PlayerInteractionAvailabilityChange.Trigger(true)
                 this.CanInteract <- true
 
         member this.OnExaminableBodyExited(body: Node) =
             if body.IsPlayer() then
-                this.Log.debug [| "Examinable.OnExaminableAreaExited called \r\n" |]
+                this.Log.Debug [| "Examinable.OnExaminableAreaExited called \r\n" |]
                 DialogEvents.PlayerInteractionAvailabilityChange.Trigger(false)
                 this.CanInteract <- false
 
@@ -57,10 +58,10 @@ type ExamineFS() =
     member val Timeline = "" with get, set
 
     member this.OnLeftClick (camera: Node) (event: InputEventMouseButton) clickPos clickNormal shapeId =
-        this.Log.debug [| "Left clicked " + this.Name |]
+        this.Log.Debug [| "Left clicked " + this.Name |]
 
     member this.OnRightClick (camera: Node) (event: InputEventMouseButton) clickPos clickNormal shapeId =
-        this.Log.debug [| "Right clicked " + this.Name |]
+        this.Log.Debug [| "Right clicked " + this.Name |]
 
     member this.OnAreaInput
         (camera: Node)
@@ -72,8 +73,8 @@ type ExamineFS() =
         match event with
         | :? InputEventMouseButton as ie ->
             match ie with
-            | ie when ie.isLeftButtonPressed () -> this.OnLeftClick camera ie clickPos clickNormal shapeId
-            | ie when ie.isRightButtonPressed () -> this.OnRightClick camera ie clickPos clickNormal shapeId
+            | ie when ie.IsLeftButtonPressed () -> this.OnLeftClick camera ie clickPos clickNormal shapeId
+            | ie when ie.IsRightButtonPressed () -> this.OnRightClick camera ie clickPos clickNormal shapeId
             | _ -> ()
         | _ -> ()
 
@@ -82,10 +83,10 @@ type ExamineFS() =
   
     member this.startDialog() =
         let args =
-            { DialogArg.timeline = this.Timeline
-              shouldRemove = this.ShouldRemove
-              methodName = nameof this.DialogListener
-              onComplete = Some this.OnInteractionComplete }
+            { DialogArg.Timeline = this.Timeline
+              ShouldRemove = this.ShouldRemove
+              MethodName = nameof this.DialogListener
+              OnComplete = Some this.OnInteractionComplete }
 
         let dialogManager =
             this.DialogManager :> IDialogManager
@@ -95,14 +96,14 @@ type ExamineFS() =
     override this._Ready() =
         this.InteractableArea <- this.GetNode<Area>(this.areaPath)
 
-        this.Log.debug [| "InteractableArea connection to Area BodyEntered "
+        this.Log.Debug [| "InteractableArea connection to Area BodyEntered "
                           this.InteractableArea.Connect(
                               Signals.Area.BodyEntered,
                               this,
                               nameof this.OnExaminableBodyEntered
                           ) |]
 
-        this.Log.debug [| "InteractableArea connection to Area BodyExited "
+        this.Log.Debug [| "InteractableArea connection to Area BodyExited "
                           this.InteractableArea.Connect(
                               Signals.Area.BodyExited,
                               this,
@@ -128,15 +129,15 @@ type IndicatorFS() =
 
     member this.OnExaminableBodyEntered(body: Node) =
         if body.IsPlayer() then
-            this.Log.debug [| "OnExaminableBodyEntered" |]
+            this.Log.Debug [| "OnExaminableBodyEntered" |]
             DialogEvents.PlayerInteractionAvailabilityChange.Trigger(true)
             this.CanInteract <- true
 
     member this.OnExaminableBodyExited(body: Node) =
         if body.IsPlayer() then
-            this.Log.debug [| "OnExaminableAreaExited" |]
+            this.Log.Debug [| "OnExaminableAreaExited" |]
             DialogEvents.PlayerInteractionAvailabilityChange.Trigger(false)
             this.CanInteract <- false
 
     override this._Ready() =
-        this.Log.debug [| "IndicatorFS OnReady" |]
+        this.Log.Debug [| "IndicatorFS OnReady" |]
