@@ -5,6 +5,7 @@ open CoreFS.Events
 open CoreFS.Resources
 open Godot
 open Common
+open Mdfry1.Logic.Constants
 open PhysicsUtil
 
 [<AllowNullLiteral>]
@@ -39,8 +40,14 @@ type MovementControllerFS() =
 
         this.gravity <- ProjectSetting.getGravity * this.playerConfig.gravityMultiplier
         GD.Print("Current Gravity = " + this.gravity.ToString())
+        this.AddToGroup(Groups.Player)
+        this.AddToGroup(Groups.Movable)
         ()
 
+    override this._ExitTree(): unit =
+        this.RemoveFromGroup(Groups.Player)
+        this.RemoveFromGroup(Groups.Movable)
+    
     member this.getCurrentSnap(delta: float32) =
         - this.GetFloorNormal()
         - this.GetFloorVelocity() * delta

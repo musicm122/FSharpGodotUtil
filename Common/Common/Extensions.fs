@@ -1,12 +1,84 @@
 ﻿namespace Common
 
+open System.Runtime.CompilerServices
 open Common.Types
 open Godot
 open System
 
+[<Extension>]
+type GodotArrayExt =
+
+    [<Extension>]
+    static member ToList<'A>(arr:Godot.Collections.Array) =
+        [ for item in arr do
+              item :?> 'A ]
+
+    [<Extension>]
+    static member ToCSharpList<'A>(arr:Godot.Collections.Array) =        
+        seq {
+            for i in 0 .. arr.Count-1 do
+                yield (arr.Item(i) :?> 'A)
+        } |> ResizeArray
+    [<Extension>]
+    static member ToSeq<'A>(arr:Godot.Collections.Array) =
+        seq {
+            for i in 0 .. arr.Count-1 do
+                yield (arr.Item(i) :?> 'A)
+        }
+        
+    [<Extension>]
+    static member ToArray<'A>(arr:Godot.Collections.Array) =
+        let newArr = Array.zeroCreate<'A> arr.Count
+
+        for i = 0 to arr.Count-1 do
+            newArr[i] <- (arr.Item(i) :?> 'A)
+        newArr
+
+    [<Extension>]
+    static member Map(arr:Godot.Collections.Array) f =
+        let result = new Godot.Collections.Array()
+
+        for item in arr do
+            result.Add(f item) |> ignore
+        result
+
+    [<Extension>]
+    static member Iter (arr:Godot.Collections.Array) (f) =
+        for item in arr do
+            f item
+        ()
+
+    [<Extension>]
+    static member Filter (arr:Godot.Collections.Array) (predicate) =
+        let result = new Godot.Collections.Array()
+
+        for item in arr do
+            match predicate item with
+            | true -> result.Add item |> ignore
+            | _ -> ()
+            |> ignore
+
+        result
+
+[<Extension>]
+type SceneTreeExt =
+
+    [<Extension>]
+    static member GetGlobalPositionOfNode2d (sceneTree:SceneTree) nodeName =
+        (sceneTree.CurrentScene.FindNode(nodeName) :?> Node2D).GlobalPosition
+    
+    [<Extension>]
+    static member GetNodesByType<'A>(sceneTree:SceneTree) =        
+        GodotArrayExt.Filter
+            (sceneTree.CurrentScene.GetChildren())
+            (fun node ->
+                match node with
+                | :? 'A -> true
+                | _ -> false)
+            
+        
 [<AutoOpen>]
 module Extensions =
-
     type Godot.Object with
 
         member this.TryConnectSignal(signalConnection: SignalConnection) =
@@ -279,7 +351,6 @@ module Extensions =
               Args = None }
             |> this.TryConnectSignal
 
-
     type InputEventMouseButton with
 
         member this.IsMouseButtonPressed(btnListItem: ButtonList) =
@@ -306,61 +377,15 @@ module Extensions =
         member this.IsRightButtonReleased() =
             this.IsMouseButtonReleased ButtonList.Right
 
-    type Godot.Collections.Array with
-
-        member this.ToList<'A>() =
-            [ for item in this do
-                  item :?> 'A ]
-
-        member this.ToSeq<'A>() =
-            seq {
-                for i in 0 .. this.Count-1 do
-                    yield (this.Item(i) :?> 'A)
-            }
-
-        member this.ToArray<'A>() =
-            let arr = Array.zeroCreate<'A> this.Count
-
-            for i = 0 to this.Count-1 do
-                arr[i] <- (this.Item(i) :?> 'A)
-
-            arr
-
-        member this.Map(f) =
-            let result = new Godot.Collections.Array()
-
-            for item in this do
-                result.Add(f item) |> ignore
-
-            result
-
-        member this.Iter(f) =
-            for item in this do
-                f item
-
-            ()
-
-        member this.Filter(predicate) =
-            let result = new Godot.Collections.Array()
-
-            for item in this do
-                match predicate item with
-                | true -> result.Add item |> ignore
-                | _ -> ()
-                |> ignore
-
-            result
-
     type SceneTree with
 
         member this.GetGlobalPositionOfNode2d nodeName =
             (this.CurrentScene.FindNode(nodeName) :?> Node2D).GlobalPosition
 
         member this.GetNodesByType<'A>() =
-            this
-                .CurrentScene
-                .GetChildren()
-                .Filter(fun node ->
+            GodotArrayExt.Filter
+                (this.CurrentScene.GetChildren())
+                (fun node ->
                     match node with
                     | :? 'A -> true
                     | _ -> false)

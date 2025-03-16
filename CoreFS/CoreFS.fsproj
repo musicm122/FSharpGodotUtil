@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\Mdfry1\Mdfry1.Logic\Mdfry1.Logic.fsproj" />
         <ProjectReference Include="..\Common\Common\Common.fsproj" />
     </ItemGroup>
 
